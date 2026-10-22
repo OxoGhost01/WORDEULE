@@ -39,13 +39,14 @@ export function getScores() {
 	return readData().scores
 }
 
-export function saveScore({ mode, score, outcome }) {
+export function saveScore({ mode, score, outcome, tries }) {
 	const data = readData()
 	const result = {
 		username: data.username || 'Player',
 		mode,
 		score,
 		outcome,
+		tries,
 		playedAt: new Date().toISOString(),
 	}
 	data.scores.push(result)

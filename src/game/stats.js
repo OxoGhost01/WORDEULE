@@ -1,5 +1,8 @@
-// Stats of one mode from the saved results (one result per word played)
-export default function computeStats(scores, mode) {
+// Stats of one mode from the saved results (one result per word played).
+// Made for the endless modes (classic...): the score of a result is the total of the run so far,
+// so the points of a won word are the score minus the score of the previous word of the same run.
+// maxTries: number of tries of the mode (6 in classic).
+export default function computeStats(scores, mode, maxTries = 6) {
     const games = scores
         .filter((result) => result.mode === mode)
         .sort((a, b) => a.playedAt.localeCompare(b.playedAt))
@@ -7,16 +10,26 @@ export default function computeStats(scores, mode) {
     let wins = 0
     let streak = 0
     let bestStreak = 0
-    let bestScore = 0
+    let totalPoints = 0
+    const distribution = Array(maxTries).fill(0) // distribution[0]: wins in 1 try, [1]: in 2 tries...
+
+    let previous = null
     for (const game of games) {
         if (game.outcome === 'won') {
             wins++
             streak++
             bestStreak = Math.max(bestStreak, streak)
+
+            const points = game.score - (previous?.outcome === 'won' ? previous.score : 0)
+            totalPoints += points
+
+            // results saved before the number of tries was stored: it can be found back from the points
+            const tries = game.tries ?? maxTries + 1 - points / 100
+            if (distribution[tries - 1] !== undefined) distribution[tries - 1]++
         } else {
             streak = 0
         }
-        bestScore = Math.max(bestScore, game.score)
+        previous = game
     }
 
     return {
@@ -25,6 +38,7 @@ export default function computeStats(scores, mode) {
         winRate: games.length ? Math.round((wins / games.length) * 100) : 0,
         streak,
         bestStreak,
-        bestScore,
+        totalPoints,
+        distribution,
     }
 }

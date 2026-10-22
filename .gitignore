@@ -30,3 +30,4 @@ deploy.sh
 # Leaderboard data in dev
 server/data
 deploy/
+docker/

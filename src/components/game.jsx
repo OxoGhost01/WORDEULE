@@ -17,10 +17,10 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
         if (status === 'playing' || status === 'idle') {
             savedResult.current = false
         } else if (!savedResult.current) {
-            if (saveResult) sendScore(saveScore({ mode, score, outcome: status }))
+            if (saveResult) sendScore(saveScore({ mode, score, outcome: status, tries: guesses.length }))
             savedResult.current = true
         }
-    }, [mode, score, status, saveResult])
+    }, [mode, score, status, saveResult, guesses.length])
 
     const over = status === 'won' || status === 'lost'
     // one grid fills the width, several grids share it; a single grid never gets taller than the screen

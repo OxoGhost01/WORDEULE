@@ -1,14 +1,18 @@
 import { getScores } from '../data/storage.js'
 import computeStats from '../game/stats.js'
 
+const MAX_TRIES = 6 // classic
+
 export default function Stats() {
-    const stats = computeStats(getScores(), 'classic')
+    const stats = computeStats(getScores(), 'classic', MAX_TRIES)
+    const most = Math.max(1, ...stats.distribution) // the longest bar
 
     const cards = [
         { label: 'Games played', value: stats.played, ink: 'bg-sun' },
-        { label: 'Win rate', value: `${stats.winRate}%`, note: `${stats.wins} / ${stats.played}`, ink: 'bg-pink' },
-        { label: 'Win streak', value: stats.streak, note: `best: ${stats.bestStreak}`, ink: 'bg-cobalt text-paper' },
-        { label: 'Personal best', value: stats.bestScore, note: 'points', ink: 'bg-ink text-paper' },
+        { label: 'Victories', value: `${stats.winRate}%`, note: `${stats.wins} / ${stats.played}`, ink: 'bg-pink' },
+        { label: 'Win streak', value: stats.streak, note: 'in a row, right now', ink: 'bg-cobalt text-paper' },
+        { label: 'Best streak', value: stats.bestStreak, note: 'in a row, ever', ink: 'bg-ink text-paper' },
+        { label: 'Total points', value: stats.totalPoints, ink: 'bg-card col-span-2' },
     ]
 
     return (
@@ -28,6 +32,21 @@ export default function Stats() {
                     </li>
                 ))}
             </ul>
+
+            <div className="flex w-full flex-col gap-3 border-[3px] border-ink bg-card p-5 shadow-hard">
+                <h3 className="font-display text-2xl font-extrabold uppercase">Victories by number of tries</h3>
+                <ol className="flex flex-col gap-2">
+                    {stats.distribution.map((count, i) => (
+                        <li key={i} className="flex items-center gap-3">
+                            <span className="w-4 font-display text-lg font-extrabold">{i + 1}</span>
+                            <div className="flex flex-1 items-center gap-2">
+                                {count > 0 && <div className="h-7 border-[3px] border-ink bg-cobalt" style={{ width: `${(count / most) * 85}%` }} />}
+                                <span className="font-bold">{count}</span>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+            </div>
         </section>
     )
 }
