@@ -41,9 +41,10 @@ function Home() {
   const game = { mode, answers, words: mots, guesses, setGuesses, guess, setGuess, score, setScore, maxTries, start }
 
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+      <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-8">
         <Header />
+        <main className="flex flex-1 flex-col items-center pt-6">
         <Routes>
           <Route path="/" element={<Menu />} />
           <Route path="/daily" element={<Daily game={game} />} />
@@ -53,9 +54,10 @@ function Home() {
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/about" element={<About />} />
         </Routes>
+        </main>
         <Footer />
-      </BrowserRouter>
-    </>
+      </div>
+    </BrowserRouter>
   )
 }
 

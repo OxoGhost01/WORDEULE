@@ -30,9 +30,9 @@ export default function Hardcore({ game }) {
 
     // infinite mode: a win keeps the score and gives 4 new words, a loss starts over from 0
     return (
-        <section className="hardcore">
-        <h2>Hardcore</h2>
-        {error && <p>{error}</p>}
+        <section className="hardcore flex w-full flex-col items-center gap-6">
+        <h2 className="page-title">Hardcore</h2>
+        {error && <p className="notice">{error}</p>}
         {mode === 'hardcore' && (
             <Game game={game} onNext={() => launch(true)} onRestart={() => launch()} />
         )}

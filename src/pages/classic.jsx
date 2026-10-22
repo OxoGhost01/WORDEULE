@@ -28,9 +28,9 @@ export default function Classic({ game }) {
 
     // infinite mode: a win keeps the score and gives a new word, a loss starts over from 0
     return (
-        <section className="classic">
-        <h2>Classic</h2>
-        {error && <p>{error}</p>}
+        <section className="classic flex w-full flex-col items-center gap-6">
+        <h2 className="page-title">Classic</h2>
+        {error && <p className="notice">{error}</p>}
         {mode === 'classic' && (
             <Game game={game} onNext={() => launch(true)} onRestart={() => launch()} />
         )}

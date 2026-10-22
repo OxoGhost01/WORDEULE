@@ -21,18 +21,32 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
         }
     }, [mode, score, status, saveResult])
 
+    const over = status === 'won' || status === 'lost'
+    // one grid fills the width, several grids share it; a single grid never gets taller than the screen
+    const gridWidth = answers.length === 1
+        ? `max(9rem, min(100%, 22rem, calc((100dvh - 26rem) * ${(answers[0]?.length ?? 5) / maxTries})))`
+        : '12.5rem'
+
     return (
-        <>
-            {answers.map((word) => (
-                <Grid key={word} guesses={guesses} guess={guess} word={word} maxTries={maxTries} />
-            ))}
+        <div className="flex w-full flex-col items-center gap-6">
+            <div className="flex w-full max-w-6xl flex-wrap justify-center gap-x-6 gap-y-6">
+                {answers.map((word) => (
+                    <Grid key={word} guesses={guesses} guess={guess} word={word} maxTries={maxTries} width={gridWidth} />
+                ))}
+            </div>
             <Keyboard answers={answers} guesses={guesses} onKey={onKey} />
-            {status === 'won' && <p>Won in {guesses.length} / {maxTries}</p>}
-            {status === 'lost' && <p>Lost, the {answers.length > 1 ? 'words were' : 'word was'} {answers.filter((a) => !guesses.includes(a)).join(', ')}</p>}
-            {(status === 'won' || status === 'lost') && <p>Score: {score}</p>}
-            {status === 'won' && onNext && <button onClick={onNext}>Next word</button>}
-            {status === 'lost' && onRestart && <button onClick={onRestart}>New game</button>}
-            {(status === 'won' || status === 'lost') && answers.map((word) => <Wiki key={word} word={word} />)}
-        </>
+            {over && (
+                <div className="flex flex-col items-center gap-4">
+                    {status === 'won' && <p className="stamp border-cobalt text-cobalt">Won in {guesses.length} / {maxTries}</p>}
+                    {status === 'lost' && <p className="stamp border-pink text-pink">Lost, the {answers.length > 1 ? 'words were' : 'word was'} {answers.filter((a) => !guesses.includes(a)).join(', ')}</p>}
+                    <p className="font-display text-2xl font-extrabold uppercase">Score: {score}</p>
+                    {status === 'won' && onNext && <button className="btn" onClick={onNext}>Next word</button>}
+                    {status === 'lost' && onRestart && <button className="btn bg-pink" onClick={onRestart}>New game</button>}
+                    <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                        {answers.map((word) => <Wiki key={word} word={word} />)}
+                    </div>
+                </div>
+            )}
+        </div>
     )
 }

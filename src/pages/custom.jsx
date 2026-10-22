@@ -29,30 +29,30 @@ export default function Custom({ game }) {
 
     // infinite mode like classic: a win keeps the score and gives a new word, a loss starts over from 0
     return (
-        <section className="custom">
-        <h2>Custom</h2>
+        <section className="custom flex w-full flex-col items-center gap-6">
+        <h2 className="page-title">Custom</h2>
         {!started && (
-            <form onSubmit={(e) => { e.preventDefault(); launch() }}>
-                <label>
+            <form className="flex w-full max-w-md flex-col gap-5 border-[3px] border-ink bg-card p-6 shadow-hard-lg" onSubmit={(e) => { e.preventDefault(); launch() }}>
+                <label className="flex flex-col gap-1 text-sm font-bold uppercase">
                     Word length
-                    <input type="number" min={MIN} max={MAX} value={wordLength} onChange={(e) => setWordLength(Number(e.target.value))} />
+                    <input className="field" type="number" min={MIN} max={MAX} value={wordLength} onChange={(e) => setWordLength(Number(e.target.value))} />
                 </label>
-                <label>
+                <label className="flex flex-col gap-1 text-sm font-bold uppercase">
                     Max tries
-                    <input type="number" min={MIN} max={MAX} value={maxTries} onChange={(e) => setMaxTries(Number(e.target.value))} />
+                    <input className="field" type="number" min={MIN} max={MAX} value={maxTries} onChange={(e) => setMaxTries(Number(e.target.value))} />
                 </label>
-                <label>
+                <label className="flex flex-col gap-1 text-sm font-bold uppercase">
                     Number of grids
-                    <input type="number" min={1} max={MAX} value={wordCount} onChange={(e) => setWordCount(Number(e.target.value))} />
+                    <input className="field" type="number" min={1} max={MAX} value={wordCount} onChange={(e) => setWordCount(Number(e.target.value))} />
                 </label>
-                <button type="submit" disabled={!valid}>Start</button>
-                {error && <p>{error}</p>}
+                <button className="btn" type="submit" disabled={!valid}>Start</button>
+                {error && <p className="notice">{error}</p>}
             </form>
         )}
         {started && mode === 'custom' && (
             <>
                 <Game game={game} onNext={() => launch(true)} onRestart={() => launch()} />
-                <button onClick={() => setStarted(false)}>Change difficulty</button>
+                <button className="btn bg-card" onClick={() => setStarted(false)}>Change difficulty</button>
             </>
         )}
         </section>

@@ -1,9 +1,16 @@
 
 export default function Wiki({ word }) {
-    word = word.toLowerCase()
+    const lower = word.toLowerCase()
     return (
         <section className="wiki">
-            <a href={`https://en.wiktionary.org/wiki/${word}`} target="_blank" rel="noreferrer">See the word on Wiktionary</a>
+            <a
+                className="font-bold underline decoration-4 decoration-pink underline-offset-4 hover:bg-pink"
+                href={`https://en.wiktionary.org/wiki/${lower}`}
+                target="_blank"
+                rel="noreferrer"
+            >
+                What does {word} mean ?
+            </a>
         </section>
     )
 }

@@ -38,11 +38,11 @@ export default function Daily({ game }) {
     const over = answers.length > 0 && (answers.every((a) => guesses.includes(a)) || guesses.length >= maxTries)
 
     return (
-        <section className="daily">
-        <h2>Daily</h2>
-        {error && <p>{error}</p>}
+        <section className="daily flex w-full flex-col items-center gap-6">
+        <h2 className="page-title">Daily</h2>
+        {error && <p className="notice">{error}</p>}
         {ready && mode === 'daily' && <Game game={game} saveResult={!alreadyDone} />}
-        {ready && mode === 'daily' && over && <p>Come back tomorrow for a new word</p>}
+        {ready && mode === 'daily' && over && <p className="notice">Come back tomorrow for a new word</p>}
         </section>
     )
 }
