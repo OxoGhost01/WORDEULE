@@ -13,6 +13,7 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
     const { status, onKey, row, fixed, required, feedback } = useGame(game)
     const savedResult = useRef(false)
 
+    // save the result once, when the game ends (the flag is reset when a new game starts)
     useEffect(() => {
         if (status === 'playing' || status === 'idle') {
             savedResult.current = false
@@ -28,6 +29,7 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
         ? `max(9rem, min(100%, 22rem, calc((100dvh - 26rem) * ${(answers[0]?.length ?? 5) / maxTries})))`
         : '12.5rem'
 
+    // grids, then messages, keyboard, and the end of game block
     return (
         <div className="flex w-full flex-col items-center gap-6">
             <div className="flex w-full max-w-6xl flex-wrap justify-center gap-x-6 gap-y-6">
@@ -35,6 +37,7 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
                     <Grid key={word} guesses={guesses} guess={row} word={word} maxTries={maxTries} width={gridWidth} fixed={fixed} shake={feedback} />
                 ))}
             </div>
+            {/* refused word message, and the letters the locked mode asks to use */}
             <div className="flex min-h-9 flex-col items-center gap-2">
                 {feedback.text && <p className="notice">{feedback.text}</p>}
                 {required.length > 0 && !over && (

@@ -12,6 +12,7 @@ const pad = (n) => String(n).padStart(2, '0')
 export default function Countdown() {
     const [left, setLeft] = useState(secondsLeft)
 
+    // refresh the time left every second
     useEffect(() => {
         const timer = setInterval(() => setLeft(secondsLeft()), 1000)
         return () => clearInterval(timer)

@@ -1,5 +1,6 @@
 import { Link } from 'react-router'
 
+// One slab per page: where it goes, its title, a short line, and its color
 const MODES = [
     { to: '/how-to-play', name: 'How to play', note: 'The rules, and what each mode changes.', ink: 'bg-card' },
     { to: '/daily', name: 'Daily', note: 'One word. One shot. The same for everybody.', ink: 'bg-sun' },

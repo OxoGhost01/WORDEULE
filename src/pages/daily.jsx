@@ -14,12 +14,13 @@ export default function Daily({ game }) {
     const [ready, setReady] = useState(false) // today's game is loaded (and restored if already started)
     const [alreadyDone, setAlreadyDone] = useState(false) // finished before this visit: result already saved
 
+    // load the words and start today's game, restoring the guesses if it was already started
     useEffect(() => {
         let cancelled = false // the page may be left before the word is loaded
         loadWords(WORD_LENGTH)
             .then((words) => {
                 if (cancelled) return
-                const word = getDailyWord(words)
+                const word = getDailyWord(words) // same word for everybody today
                 const saved = getDailyProgress(todayKey())
                 const won = saved.includes(word)
                 start('daily', words, [word], MAX_TRIES)
@@ -32,10 +33,12 @@ export default function Daily({ game }) {
         return () => { cancelled = true }
     }, [start, setGuesses, setScore])
 
+    // keep the guesses of the day, so a refresh can't give a new attempt
     useEffect(() => {
         if (ready) saveDailyProgress(todayKey(), guesses)
     }, [ready, guesses])
 
+    // game finished (won or out of tries): show the countdown
     const over = answers.length > 0 && (answers.every((a) => guesses.includes(a)) || guesses.length >= maxTries)
 
     return (

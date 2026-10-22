@@ -25,7 +25,7 @@ function saveScores(scores) {
 const app = express()
 app.use(express.json())
 
-// The 50 best players of a mode
+// top 50 for each mode
 app.get('/api/scores/:mode', (req, res) => {
     const { mode } = req.params
     if (!MODES.includes(mode)) return res.status(400).json({ error: 'Unknown mode' })

@@ -14,8 +14,10 @@ export default function Custom({ game }) {
     const [wordCount, setWordCount] = useState(1)
     const [error, setError] = useState('')
 
+    // all the settings must be whole numbers in the allowed range
     const valid = [wordLength, maxTries, wordCount].every((n) => Number.isInteger(n) && n >= (n === wordCount ? 1 : MIN) && n <= MAX)
 
+    // start a game with the chosen settings (keepScore: a win goes on with the same score)
     async function launch(keepScore = false) {
         try {
             const words = await loadWords(wordLength)

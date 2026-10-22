@@ -1,9 +1,9 @@
-// The word list is the full English dictionary of the an-array-of-english-words package,
-// served by jsDelivr ( allows calls from the browser). It is downloaded once per session
-// and used for both the possible answers and the valid guesses.
+// - word list obtained with the "an-array-of-english-words" package
+// - served by jsDelivr ( allows calls from the browser). It is downloaded once per session
+// - used for both the possible answers and the valid guesses.
 const DICTIONARY_URL = 'https://cdn.jsdelivr.net/npm/an-array-of-english-words@2.0.0/index.json'
 
-let dictionary = null // Promise of the whole list, uppercased and sorted
+let dictionary = null
 
 function loadDictionary() {
     if (!dictionary) {

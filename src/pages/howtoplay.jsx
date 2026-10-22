@@ -24,7 +24,8 @@ function Example({ word, statuses }) {
 const CONTENT = {
     basics: (
         <>
-            <p>Find the hidden word in a limited number of tries. Each guess must be a real English word of the right length.</p>
+            <p>Welcome to WORDEULE !</p>
+            <p>In this game, you have to find the hidden word in a limited number of tries. Each guess must be a real English word of the right length.</p>
             <p>After each guess, every letter takes a color:</p>
             <Example word="CRANE" statuses={['correct', 'absent', 'absent', 'absent', 'absent']} />
             <p><strong>Blue</strong>: the letter is in the word, at this exact place.</p>

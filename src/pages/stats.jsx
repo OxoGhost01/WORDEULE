@@ -4,9 +4,11 @@ import computeStats from '../game/stats.js'
 const MAX_TRIES = 6 // classic
 
 export default function Stats() {
+    // numbers computed from the games saved in this browser
     const stats = computeStats(getScores(), 'classic', MAX_TRIES)
     const most = Math.max(1, ...stats.distribution) // the longest bar
 
+    // the big numbers at the top
     const cards = [
         { label: 'Games played', value: stats.played, ink: 'bg-sun' },
         { label: 'Victories', value: `${stats.winRate}%`, note: `${stats.wins} / ${stats.played}`, ink: 'bg-pink' },

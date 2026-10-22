@@ -1,5 +1,6 @@
 import { letterStatuses } from '../game/evaluate.js'
 
+// QWERTY layout, row by row
 const ROWS = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
@@ -12,6 +13,7 @@ const LABELS = { Enter: 'ENTER', Backspace: '⌫' }
 // A key has one stripe per grid (one for a normal game, several for hardcore), each with the
 // class of the letter on that grid: correct, present, absent, or nothing if not tested yet.
 export default function Keyboard({ answers, guesses, onKey }) {
+    // for each grid, the status of every letter already tried
     const statuses = answers.map((word) => letterStatuses(guesses, word))
 
     return (

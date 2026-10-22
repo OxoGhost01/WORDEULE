@@ -4,11 +4,13 @@ export default function evaluate(guess, word) {
     const result = Array(guess.length).fill('absent')
     const remaining = {} // letters of the word not matched by a 'correct' yet
 
+    // first pass: the letters at the right place
     for (let i = 0; i < word.length; i++) {
         if (guess[i] === word[i]) result[i] = 'correct'
         else remaining[word[i]] = (remaining[word[i]] ?? 0) + 1
     }
 
+    // second pass: the other letters are 'present' while the word still has a copy of them
     for (let i = 0; i < guess.length; i++) {
         if (result[i] === 'correct') continue
         if (remaining[guess[i]] > 0) {

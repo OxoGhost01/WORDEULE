@@ -11,6 +11,7 @@ export default function Hardcore({ game }) {
     const { mode, start } = game
     const [error, setError] = useState('')
 
+    // start a game with a new word (keepScore: a win goes on with the same score)
     async function launch(keepScore = false) {
         try {
             const words = await loadWords(WORD_LENGTH)
@@ -20,6 +21,7 @@ export default function Hardcore({ game }) {
         }
     }
 
+    // start a game as soon as the page opens
     useEffect(() => {
         let cancelled = false // the page may be left before the word is loaded
         loadWords(WORD_LENGTH)

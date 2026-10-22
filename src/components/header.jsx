@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 
+// the logo is one colored, tilted tile per letter
 const LETTERS = "WORDEULE".split("")
 const INKS = ["bg-cobalt text-paper", "bg-pink", "bg-sun", "bg-ink text-paper"]
 const TILTS = ["-rotate-3", "rotate-2", "-rotate-1", "rotate-3"]

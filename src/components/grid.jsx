@@ -24,10 +24,12 @@ export default function Grid({ guesses, guess, word, maxTries = 6, wordLength = 
         })
     }
 
+    // shown: the guesses of this grid; solved: its word was found
     // once the word is found, this grid stops being filled (the next guesses are not shown)
     const shown = shownGuesses(guesses, word)
     const solved = guesses.includes(word)
 
+    // what to display on row i
     function row(i) {
         if (i < shown.length) return line(shown[i], i, evaluate(shown[i], word)) // already submitted
         if (i === shown.length && !solved) return line(guess, i, [], fixed)      // row being typed

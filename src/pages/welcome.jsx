@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+// First page of a new player: asks a username (shown on the leaderboard), then calls onSave
 export default function Welcome({ onSave }) {
 	const [username, setUsername] = useState('')
 

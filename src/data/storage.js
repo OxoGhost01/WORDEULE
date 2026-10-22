@@ -1,5 +1,7 @@
+// Everything saved in the browser (localStorage), in one entry: username, played games, daily progress
 const STORAGE_KEY = 'wordeule:data:v1'
 
+// Reads the saved data; anything missing or broken falls back to an empty value
 function readData() {
 	try {
 		const stored = window.localStorage.getItem(STORAGE_KEY)
@@ -39,6 +41,7 @@ export function getScores() {
 	return readData().scores
 }
 
+// Saves the result of a finished game (a word) and returns it
 export function saveScore({ mode, score, outcome, tries }) {
 	const data = readData()
 	const result = {
@@ -59,6 +62,7 @@ export function todayKey(date = new Date()) {
 	return date.toISOString().slice(0, 10)
 }
 
+// Guesses already played on the daily word of that date (none if it is a new day)
 export function getDailyProgress(date) {
 	const { daily } = readData()
 	return daily && daily.date === date ? daily.guesses : []
@@ -76,6 +80,7 @@ export function getDailyWord(words, date = new Date()) {
 	const shuffledWords = [...words]
 	let seed = 0x6d2b79f5
 
+	// small random generator: with the same seed it always gives the same numbers
 	function nextRandom() {
 		seed = (seed + 0x6d2b79f5) | 0
 		let value = seed
@@ -84,6 +89,7 @@ export function getDailyWord(words, date = new Date()) {
 		return ((value ^ (value >>> 14)) >>> 0) / 4294967296
 	}
 
+	// shuffle the list (Fisher-Yates) the same way for everybody
 	for (let index = shuffledWords.length - 1; index > 0; index -= 1) {
 		const swapIndex = Math.floor(nextRandom() * (index + 1))
 		;[shuffledWords[index], shuffledWords[swapIndex]] = [shuffledWords[swapIndex], shuffledWords[index]]
