@@ -46,8 +46,6 @@ export default function useGame({ mode, answers, words, guesses, setGuesses, gue
             setGuesses(next)
             setGuess('')
             clearText()
-            console.log(answers.map((a) => evaluate(row, a)))
-            console.log(answers)
             // all words found: points depend on the number of tries
             if (answers.every((a) => next.includes(a))) setScore((s) => s + roundScore(next.length, maxTries))
         } else if (/^[a-zA-Z]$/.test(key) && guess.length < typedLength) {
