@@ -24,3 +24,9 @@ dist-ssr
 *.sw?
 
 dictionary-*.json
+# Deployment script (server specific)
+deploy.sh
+
+# Leaderboard data in dev
+server/data
+deploy/
