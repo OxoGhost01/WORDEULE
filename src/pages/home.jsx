@@ -6,6 +6,9 @@ import Daily from './daily.jsx'
 import Classic from './classic.jsx'
 import Custom from './custom.jsx'
 import Hardcore from './hardcore.jsx'
+import Locked from './locked.jsx'
+import Stats from './stats.jsx'
+import HowToPlay from './howtoplay.jsx'
 import Leaderboard from './leaderboard.jsx'
 import About from './about.jsx'
 import Welcome from './welcome.jsx'
@@ -47,10 +50,13 @@ function Home() {
         <main className="flex flex-1 flex-col items-center pt-6">
         <Routes>
           <Route path="/" element={<Menu />} />
+          <Route path="/how-to-play" element={<HowToPlay />} />
           <Route path="/daily" element={<Daily game={game} />} />
           <Route path="/classic" element={<Classic game={game} />} />
           <Route path="/custom" element={<Custom game={game} />} />
           <Route path="/hardcore" element={<Hardcore game={game} />} />
+          <Route path="/locked" element={<Locked game={game} />} />
+          <Route path="/stats" element={<Stats />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/about" element={<About />} />
         </Routes>

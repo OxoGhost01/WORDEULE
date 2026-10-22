@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Game from '../components/game.jsx'
+import Countdown from '../components/countdown.jsx'
 import { loadWords } from '../game/words.js'
 import roundScore from '../game/score.js'
 import { getDailyWord, getDailyProgress, saveDailyProgress, todayKey } from '../data/storage.js'
@@ -42,7 +43,7 @@ export default function Daily({ game }) {
         <h2 className="page-title">Daily</h2>
         {error && <p className="notice">{error}</p>}
         {ready && mode === 'daily' && <Game game={game} saveResult={!alreadyDone} />}
-        {ready && mode === 'daily' && over && <p className="notice">Come back tomorrow for a new word</p>}
+        {ready && mode === 'daily' && over && <Countdown />}
         </section>
     )
 }

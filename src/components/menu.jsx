@@ -1,11 +1,14 @@
 import { Link } from 'react-router'
 
 const MODES = [
+    { to: '/how-to-play', name: 'How to play', note: 'The rules, and what each mode changes.', ink: 'bg-card' },
     { to: '/daily', name: 'Daily', note: 'One word. One shot. The same for everybody.', ink: 'bg-sun' },
     { to: '/classic', name: 'Classic', note: 'Endless words. Just don\'t lose.', ink: 'bg-pink' },
     { to: '/custom', name: 'Custom', note: 'You pick the length, the tries, the grids.', ink: 'bg-cobalt text-paper' },
     { to: '/hardcore', name: 'Hardcore', note: 'Four grids at once. Nine tries.', ink: 'bg-ink text-paper' },
-    { to: '/leaderboard', name: 'Scores', note: 'Who is the best on this device ?', ink: 'bg-card' },
+    { to: '/locked', name: 'Locked', note: 'Found letters are locked in. You must use them.', ink: 'bg-sun' },
+    { to: '/stats', name: 'Stats', note: 'Your classic numbers.', ink: 'bg-pink' },
+    { to: '/leaderboard', name: 'Leaderboard', note: 'The best players, for everyone.', ink: 'bg-card' },
     { to: '/about', name: 'About', note: 'Who, why, how.', ink: 'bg-card' },
 ]
 

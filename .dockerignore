@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.gitignore
+.dockerignore
+.vscode
+.claude
+deploy.sh
+server
+*.log

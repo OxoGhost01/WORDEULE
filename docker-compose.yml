@@ -1,0 +1,21 @@
+services:
+  wordeule:
+    build: .
+    container_name: wordeule
+    restart: unless-stopped
+    depends_on:
+      - api
+    # only reachable from the VPS itself: the nginx of the VPS is the public entrance
+    ports:
+      - "127.0.0.1:${WORDEULE_PORT:-8081}:80"
+
+  # leaderboard server: only reachable from the site container (nginx forwards /api to it)
+  api:
+    build: ./server
+    container_name: wordeule-api
+    restart: unless-stopped
+    volumes:
+      - wordeule-data:/data
+
+volumes:
+  wordeule-data:
