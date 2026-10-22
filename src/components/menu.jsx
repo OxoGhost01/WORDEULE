@@ -1,13 +1,16 @@
+import { Link } from 'react-router'
+
 
 export default function Menu() {
     return (
         <section className="menu">
         <ul>
-            <li><a href="#">daily</a></li>
-            <li><a href="#">classic</a></li>
-            <li><a href="#">custom</a></li>
-            <li><a href="#">leaderboard</a></li>
-            <li><a href="#">about</a></li>
+            <li><Link to="/daily">daily</Link></li>
+            <li><Link to="/classic">classic</Link></li>
+            <li><Link to="/custom">custom</Link></li>
+            <li><Link to="/hardcore">hardcore</Link></li>
+            <li><Link to="/leaderboard">leaderboard</Link></li>
+            <li><Link to="/about">about</Link></li>
         </ul>
         </section>
     )
