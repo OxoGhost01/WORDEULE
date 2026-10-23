@@ -19,7 +19,7 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
         if (status === 'playing' || status === 'idle') {
             savedResult.current = false
         } else if (!savedResult.current) {
-            if (saveResult) sendScore(saveScore({ mode, score, outcome: status, tries: guesses.length, length: answers[0].length }))
+            if (saveResult) sendScore(saveScore({ mode, score, outcome: status, tries: guesses.length }))
             savedResult.current = true
         }
     }, [mode, score, status, saveResult, guesses.length, answers])

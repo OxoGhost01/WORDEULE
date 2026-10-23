@@ -6,8 +6,8 @@ import { dirname } from 'node:path'
 
 import { PORT, DATA_FILE, MODES, LIMITS } from './config.js'
 
-// File content: { classic: [{ username, score, length, playedAt }, ...], daily: [...], ... }
-// (daily results also have the day of the word; older results may have no length)
+// File content: { classic: [{ username, score, tries, playedAt }, ...], daily: [...], ... }
+// (daily results also have the day of the word; older results may have no tries)
 function loadScores() {
     try {
         return JSON.parse(readFileSync(DATA_FILE, 'utf8'))
@@ -43,30 +43,27 @@ app.get('/api/scores/:mode', (req, res) => {
     let players = loadScores()[mode] ?? []
     if (mode === 'daily') players = players.filter((p) => p.day === today())
 
-    const best = players
-        .map((p) => ({ ...p, length: p.length ?? LIMITS.defaultLength }))
-        .sort(byScore)
-        .slice(0, LIMITS.topPlayers)
+    const best = [...players].sort(byScore).slice(0, LIMITS.topPlayers)
     res.json(best)
 })
 
-// A player sends a score: it only counts if it beats his previous best (same mode, same word length,
-// and for the daily mode the same day)
+// A player sends a score: it only counts if it beats his previous best in that mode
+// (for the daily mode: that day)
 app.post('/api/scores', (req, res) => {
     const { mode, score } = req.body
     const username = String(req.body.username ?? '').trim()
-    const length = req.body.length ?? LIMITS.defaultLength
+    const tries = req.body.tries ?? null // tries used on the word that gave the score
 
     if (!MODES.includes(mode)) return res.status(400).json({ error: 'Unknown mode' })
     if (!Number.isInteger(score) || score <= 0 || score > LIMITS.maxScore) return res.status(400).json({ error: 'Bad score' })
-    if (!Number.isInteger(length) || length < LIMITS.minLength || length > LIMITS.maxLength) return res.status(400).json({ error: 'Bad length' })
+    if (tries !== null && (!Number.isInteger(tries) || tries < 1 || tries > LIMITS.maxTries)) return res.status(400).json({ error: 'Bad tries' })
     if (username.length === 0 || username.length > LIMITS.maxUsername) return res.status(400).json({ error: 'Bad username' })
 
     const scores = loadScores()
     const players = scores[mode] ?? []
     const day = mode === 'daily' ? today() : undefined
-    const player = players.find((p) => p.username === username && (p.length ?? LIMITS.defaultLength) === length && p.day === day)
-    const result = { username, score, length, day, playedAt: new Date().toISOString() }
+    const player = players.find((p) => p.username === username && p.day === day)
+    const result = { username, score, tries, day, playedAt: new Date().toISOString() }
 
     if (!player) {
         players.push(result)

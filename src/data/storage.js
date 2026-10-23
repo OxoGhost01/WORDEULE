@@ -46,7 +46,7 @@ export function getScores() {
 }
 
 // Saves the result of a finished game (a word) and returns it
-export function saveScore({ mode, score, outcome, tries, length }) {
+export function saveScore({ mode, score, outcome, tries }) {
 	const data = readData()
 	const result = {
 		username: data.username || 'Player',
@@ -54,7 +54,6 @@ export function saveScore({ mode, score, outcome, tries, length }) {
 		score,
 		outcome,
 		tries,
-		length, // letters of the word
 		playedAt: new Date().toISOString(),
 	}
 	data.scores.push(result)

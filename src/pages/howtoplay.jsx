@@ -46,7 +46,7 @@ const CONTENT = {
         <>
             <p>One word a day, the same for everybody. 5 letters, 6 tries.</p>
             <p>You only get one attempt per day: if you leave and come back, you pick up where you stopped. When the game is over, a counter shows the time left before the next word (it changes at midnight UTC).</p>
-            <p>Your score is sent to the daily leaderboard, which only shows the players of today's word: ranked by points. A counter on the page shows how many players found the word today.</p>
+            <p>Your score is sent to the daily leaderboard, which only shows the players of today's word, ranked by points, with the number of tries each needed. A counter on the page shows how many players found the word today.</p>
         </>
     ),
     classic: (
@@ -59,7 +59,7 @@ const CONTENT = {
     custom: (
         <>
             <p>Your rules. Choose the length of the word (3 to 10), the number of tries (3 to 10) and the number of grids (1 to 10).</p>
-            <p>It plays like classic: endless, until you miss a word. Your settings are saved for your next visit, and the length is in the address of the game (/custom/7 is a game with 7 letters). The leaderboard shows the length of each game and can be filtered by length.</p>
+            <p>It plays like classic: endless, until you miss a word. Your settings are saved for your next visit, and the length is in the address of the game (/custom/7 is a game with 7 letters). Custom games are not on the leaderboard, since their rules change every game.</p>
         </>
     ),
     hardcore: (

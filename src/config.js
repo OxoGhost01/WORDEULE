@@ -50,7 +50,7 @@ export const SCORE = {
 
 // --- Leaderboard, server and browser -------------------------------------------------------------
 
-export const LEADERBOARD_MODES = ['daily', 'classic', 'hardcore', 'locked', 'custom']
+export const LEADERBOARD_MODES = ['daily', 'classic', 'hardcore', 'locked'] // custom is not ranked: its rules change every game
 export const API_URL = '/api' // see vite.config.js (dev) and docker/nginx.conf (production)
 export const STORAGE_KEY = 'wordeule:data:v1' // where the data is saved in the browser
 export const USERNAME_MAX_LENGTH = 24

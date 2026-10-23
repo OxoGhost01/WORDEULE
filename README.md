@@ -48,7 +48,7 @@ Type with the keyboard or with the one on the screen, which also shows the state
 | **Hardcore** | 5 | 9 | 4 grids at the same time. Every guess is played on all grids, a grid stops when its word is found, you win when all 4 are found. |
 | **Locked** | 5 | 6 | The hard mode. A letter found at its place is locked there and pre-filled on every new line. A letter found elsewhere must be used in the next guesses. |
 
-The pages also include a **leaderboard** (global, one tab per mode), **stats** (one tab per mode) and a **How to play** page.
+The pages also include a **leaderboard** (global, one tab per mode except custom, whose rules change every game, with the number of tries of each result), **stats** (one tab per mode) and a **How to play** page.
 
 ## Score
 
@@ -151,10 +151,10 @@ The server keeps the best score of every player. A result only replaces the prev
 | Route | What it does |
 | --- | --- |
 | `GET /api/scores/:mode` | The best players of a mode. For `daily`, only the players of today's word. |
-| `POST /api/scores` | Sends a result: `{ username, mode, score, length }` |
+| `POST /api/scores` | Sends a result: `{ username, mode, score, tries }` |
 | `GET /api/daily/count` | Number of players who found today's word |
 
-The server checks the mode, the score, the length and the username. Modes: `daily`, `classic`, `hardcore`, `locked`, `custom`.
+The server checks the mode, the score, the number of tries and the username. Modes: `daily`, `classic`, `hardcore`, `locked` (custom games are not ranked).
 
 ## Tests
 
