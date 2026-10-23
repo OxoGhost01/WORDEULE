@@ -1,11 +1,6 @@
 import { letterStatuses } from '../game/evaluate.js'
+import { KEYBOARD_ROWS } from '../config.js'
 
-// QWERTY layout, row by row
-const ROWS = [
-    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['Enter', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Backspace'],
-]
 
 const LABELS = { Enter: 'ENTER', Backspace: '⌫' }
 
@@ -18,7 +13,7 @@ export default function Keyboard({ answers, guesses, onKey }) {
 
     return (
         <div className="flex w-full max-w-xl flex-col gap-1.5">
-            {ROWS.map((row, i) => (
+            {KEYBOARD_ROWS.map((row, i) => (
                 <div key={i} className={`flex gap-1 sm:gap-1.5 ${i === 1 ? 'px-[5%]' : ''}`}>
                     {row.map((key) => (
                         <button

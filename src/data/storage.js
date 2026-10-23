@@ -1,20 +1,24 @@
-// Everything saved in the browser (localStorage), in one entry: username, played games, daily progress
-const STORAGE_KEY = 'wordeule:data:v1'
+// Everything saved in the browser (localStorage), in one entry: username, played games, daily progress, settings
+import { STORAGE_KEY, CUSTOM, DAILY } from '../config.js'
+
+// Nothing saved yet
+const emptyData = () => ({ username: '', scores: [], daily: null, settings: {} })
 
 // Reads the saved data; anything missing or broken falls back to an empty value
 function readData() {
 	try {
 		const stored = window.localStorage.getItem(STORAGE_KEY)
-		if (!stored) return { username: '', scores: [], daily: null }
+		if (!stored) return emptyData()
 
 		const data = JSON.parse(stored)
 		return {
 			username: typeof data.username === 'string' ? data.username : '',
 			scores: Array.isArray(data.scores) ? data.scores : [],
 			daily: data.daily && typeof data.daily.date === 'string' && Array.isArray(data.daily.guesses) ? data.daily : null,
+			settings: data.settings && typeof data.settings === 'object' ? data.settings : {},
 		}
 	} catch {
-		return { username: '', scores: [], daily: null }
+		return emptyData()
 	}
 }
 
@@ -42,7 +46,7 @@ export function getScores() {
 }
 
 // Saves the result of a finished game (a word) and returns it
-export function saveScore({ mode, score, outcome, tries }) {
+export function saveScore({ mode, score, outcome, tries, length }) {
 	const data = readData()
 	const result = {
 		username: data.username || 'Player',
@@ -50,6 +54,7 @@ export function saveScore({ mode, score, outcome, tries }) {
 		score,
 		outcome,
 		tries,
+		length, // letters of the word
 		playedAt: new Date().toISOString(),
 	}
 	data.scores.push(result)
@@ -74,15 +79,26 @@ export function saveDailyProgress(date, guesses) {
 	writeData(data)
 }
 
+// Settings of the custom mode, kept between two visits
+export function getSettings() {
+	return { ...CUSTOM.defaults, ...readData().settings }
+}
+
+export function saveSettings(settings) {
+	const data = readData()
+	data.settings = settings
+	writeData(data)
+}
+
 // Same word for everybody during a whole day (UTC): the list is shuffled with a fixed seed,
 // then indexed by the number of days since 1970-01-01, so no word repeats before the list is used up
 export function getDailyWord(words, date = new Date()) {
 	const shuffledWords = [...words]
-	let seed = 0x6d2b79f5
+	let seed = DAILY.seed
 
 	// small random generator: with the same seed it always gives the same numbers
 	function nextRandom() {
-		seed = (seed + 0x6d2b79f5) | 0
+		seed = (seed + 0x6d2b79f5) | 0 // (constant of the algorithm, not a setting)
 		let value = seed
 		value = Math.imul(value ^ (value >>> 15), value | 1)
 		value ^= value + Math.imul(value ^ (value >>> 7), value | 61)

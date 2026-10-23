@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Grid from './grid.jsx'
 import useGame from '../game/useGame.js'
 import Keyboard from './keyboard.jsx'
 import Wiki from '../components/wiki.jsx'
-import { saveScore } from '../data/storage.js'
+import { saveScore, todayKey } from '../data/storage.js'
+import shareText from '../game/share.js'
 import { sendScore } from '../data/api.js'
 
 // One round: grid + typing + end message. onNext (after a win) and onRestart (after a loss) are optional.
@@ -18,12 +19,35 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
         if (status === 'playing' || status === 'idle') {
             savedResult.current = false
         } else if (!savedResult.current) {
-            if (saveResult) sendScore(saveScore({ mode, score, outcome: status, tries: guesses.length }))
+            if (saveResult) sendScore(saveScore({ mode, score, outcome: status, tries: guesses.length, length: answers[0].length }))
             savedResult.current = true
         }
-    }, [mode, score, status, saveResult, guesses.length])
+    }, [mode, score, status, saveResult, guesses.length, answers])
 
     const over = status === 'won' || status === 'lost'
+
+    // text to share (colors only, no letters); copiedText remembers which text was copied
+    const [copiedText, setCopiedText] = useState('')
+    const text = over ? shareText(mode === 'daily' ? `daily ${todayKey()}` : mode, answers, guesses, maxTries) : ''
+    // share with the native share sheet of the phone when there is one, otherwise copy the text and the link
+    async function share() {
+        const url = window.location.origin
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: 'WORDEULE', text, url })
+            } catch {
+                // the player closed the share sheet
+            }
+            return
+        }
+        try {
+            await navigator.clipboard.writeText(`${text}\n${url}`)
+            setCopiedText(text)
+        } catch {
+            setCopiedText('') // clipboard not allowed
+        }
+    }
+
     // one grid fills the width, several grids share it; a single grid never gets taller than the screen
     const gridWidth = answers.length === 1
         ? `max(9rem, min(100%, 22rem, calc((100dvh - 26rem) * ${(answers[0]?.length ?? 5) / maxTries})))`
@@ -56,6 +80,7 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
                     {status === 'lost' && <p className="stamp border-pink text-pink">Lost, the {answers.length > 1 ? 'words were' : 'word was'} {answers.filter((a) => !guesses.includes(a)).join(', ')}</p>}
                     <p className="font-display text-2xl font-extrabold uppercase">Score: {score}</p>
                     {status === 'won' && onNext && <button className="btn" onClick={onNext}>Next word</button>}
+                    <button className="btn bg-card" onClick={share}>{copiedText === text ? 'Copied !' : 'Share'}</button>
                     {status === 'lost' && onRestart && <button className="btn bg-pink" onClick={onRestart}>New game</button>}
                     <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
                         {answers.map((word) => <Wiki key={word} word={word} />)}

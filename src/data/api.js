@@ -1,21 +1,29 @@
 // Global leaderboard: talks to the server in /server (through /api, see vite.config.js and docker/nginx.conf)
 
-// Modes of the leaderboard (custom is not in it: its difficulty changes, so scores can't be compared)
-export const LEADERBOARD_MODES = ['daily', 'classic', 'hardcore', 'locked']
+import { API_URL, LEADERBOARD_MODES } from '../config.js'
 
-// Sends a score; the server only keeps the best of each player. A failure is not a problem: the game goes on.
-export function sendScore({ username, mode, score }) {
+// Sends a score with the length of the word; the server only keeps the best of each
+// player. A failure is not a problem: the game goes on.
+export function sendScore({ username, mode, score, length }) {
     if (!LEADERBOARD_MODES.includes(mode) || score <= 0) return
-    fetch('/api/scores', {
+    fetch(`${API_URL}/scores`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, mode, score }),
+        body: JSON.stringify({ username, mode, score, length }),
     }).catch(() => {})
 }
 
-// The best players of a mode: [{ username, score, playedAt }, ...]
+// The best players of a mode: [{ username, score, length, playedAt }, ...]
+// (for the daily mode: only the players of today's word)
 export async function fetchLeaderboard(mode) {
-    const response = await fetch(`/api/scores/${mode}`)
+    const response = await fetch(`${API_URL}/scores/${mode}`)
     if (!response.ok) throw new Error('Could not load the leaderboard')
     return response.json()
+}
+
+// Number of players who found today's daily word
+export async function fetchDailyCount() {
+    const response = await fetch(`${API_URL}/daily/count`)
+    if (!response.ok) throw new Error('Could not load the counter')
+    return (await response.json()).count
 }

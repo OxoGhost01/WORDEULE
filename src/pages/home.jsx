@@ -13,6 +13,7 @@ import Leaderboard from './leaderboard.jsx'
 import About from './about.jsx'
 import Welcome from './welcome.jsx'
 import { getUsername, saveUsername } from '../data/storage.js'
+import { DEFAULT_MAX_TRIES } from '../config.js'
 import { BrowserRouter, Route, Routes } from 'react-router'
 
 // Root of the app: owns the state of the current game, shared by all the modes (only one runs at a time)
@@ -24,11 +25,11 @@ function Home() {
   const [score, setScore] = useState(0) // Score
   const [answers, setAnswers] = useState([]) // Words to guess (one grid each)
   const [guesses, setGuesses] = useState([]) // Words already submitted by the player
-  const [maxTries, setMaxTries] = useState(6) // Number of tries allowed
+  const [maxTries, setMaxTries] = useState(DEFAULT_MAX_TRIES) // Number of tries allowed
   const [username, setUsername] = useState(getUsername) // saved in the browser, asked by Welcome the first time
 
   // Launches a game: only one mode runs at a time, so they all share the same state (singleton)
-  const start = useCallback((newMode, newWords, newAnswers, newMaxTries = 6, keepScore = false) => {
+  const start = useCallback((newMode, newWords, newAnswers, newMaxTries = DEFAULT_MAX_TRIES, keepScore = false) => {
     setMode(newMode)
     setMots(newWords)
     setAnswers(newAnswers)
@@ -56,7 +57,7 @@ function Home() {
           <Route path="/how-to-play" element={<HowToPlay />} />
           <Route path="/daily" element={<Daily game={game} />} />
           <Route path="/classic" element={<Classic game={game} />} />
-          <Route path="/custom" element={<Custom game={game} />} />
+          <Route path="/custom/:length?" element={<Custom game={game} />} />
           <Route path="/hardcore" element={<Hardcore game={game} />} />
           <Route path="/locked" element={<Locked game={game} />} />
           <Route path="/stats" element={<Stats />} />

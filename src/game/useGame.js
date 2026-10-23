@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import roundScore from './score.js'
+import roundScore, { scoreMultiplier } from './score.js'
 import evaluate from './evaluate.js'
 import { fixedLetters, requiredCounts, missingLetters, mergeRow } from './locked.js'
 
@@ -46,13 +46,15 @@ export default function useGame({ mode, answers, words, guesses, setGuesses, gue
             setGuesses(next)
             setGuess('')
             clearText()
-            // all words found: points depend on the number of tries
-            if (answers.every((a) => next.includes(a))) setScore((s) => s + roundScore(next.length, maxTries))
+            // all words found: points depend on the number of tries and on the difficulty of the mode
+            if (answers.every((a) => next.includes(a))) {
+                setScore((s) => s + roundScore(next.length, maxTries, scoreMultiplier(mode, wordLength, answers.length)))
+            }
         } else if (/^[a-zA-Z]$/.test(key) && guess.length < typedLength) {
             clearText()
             setGuess(guess + key.toUpperCase())
         }
-    }, [status, answers, typedLength, locked, row, missingRequired, guesses, guess, maxTries, validWords, setGuesses, setGuess, setScore])
+    }, [status, mode, wordLength, answers, typedLength, locked, row, missingRequired, guesses, guess, maxTries, validWords, setGuesses, setGuess, setScore])
 
     // real keyboard: every key goes to onKey (the virtual keyboard calls it too)
     useEffect(() => {

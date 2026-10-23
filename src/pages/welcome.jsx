@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { USERNAME_MAX_LENGTH } from '../config.js'
 
 // First page of a new player: asks a username (shown on the leaderboard), then calls onSave
 export default function Welcome({ onSave }) {
@@ -27,7 +28,7 @@ export default function Welcome({ onSave }) {
 					className="field"
 					id="username"
 					autoComplete="nickname"
-					maxLength={24}
+					maxLength={USERNAME_MAX_LENGTH}
 					value={username}
 					onChange={(event) => setUsername(event.target.value)}
 					required

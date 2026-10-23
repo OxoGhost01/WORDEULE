@@ -1,11 +1,10 @@
 // Hardcore: 4 grids played at once, same guesses on all of them
 import { useEffect, useState } from 'react'
 import Game from '../components/game.jsx'
-import { loadWords, randomWords } from '../game/words.js'
+import { loadWordLists, randomWords } from '../game/words.js'
+import { GAME_MODES } from '../config.js'
 
-const WORD_LENGTH = 5
-const MAX_TRIES = 9
-const WORD_COUNT = 4 // grids played at the same time
+const { wordLength: WORD_LENGTH, maxTries: MAX_TRIES, grids: WORD_COUNT } = GAME_MODES.hardcore // WORD_COUNT: grids played at the same time
 
 export default function Hardcore({ game }) {
     const { mode, start } = game
@@ -14,8 +13,8 @@ export default function Hardcore({ game }) {
     // start a game with a new word (keepScore: a win goes on with the same score)
     async function launch(keepScore = false) {
         try {
-            const words = await loadWords(WORD_LENGTH)
-            start('hardcore', words, randomWords(words, WORD_COUNT), MAX_TRIES, keepScore)
+            const { words, answers } = await loadWordLists(WORD_LENGTH)
+            start('hardcore', words, randomWords(answers, WORD_COUNT), MAX_TRIES, keepScore)
         } catch (e) {
             setError(e.message)
         }
@@ -24,8 +23,8 @@ export default function Hardcore({ game }) {
     // start a game as soon as the page opens
     useEffect(() => {
         let cancelled = false // the page may be left before the word is loaded
-        loadWords(WORD_LENGTH)
-            .then((words) => { if (!cancelled) start('hardcore', words, randomWords(words, WORD_COUNT), MAX_TRIES) })
+        loadWordLists(WORD_LENGTH)
+            .then(({ words, answers }) => { if (!cancelled) start('hardcore', words, randomWords(answers, WORD_COUNT), MAX_TRIES) })
             .catch((e) => { if (!cancelled) setError(e.message) })
         return () => { cancelled = true }
     }, [start])

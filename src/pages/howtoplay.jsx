@@ -35,7 +35,10 @@ const CONTENT = {
             <p><strong>Black</strong>: the letter is not in the word (or all its copies are already found).</p>
             <p>
                 Type with your keyboard or with the one on the screen, which also shows the state of every letter.
-                A win gives more points the fewer tries you used: (tries left + 1) x 100.
+                A win gives more points the fewer tries you used: (tries left + 1) x 100. Harder games are worth more: x1.5 for 6 letters, x2 for 7 letters or more, x1.5 in locked mode, and x the number of grids (x4 in hardcore).
+            </p>
+            <p>
+                When a game ends, the Share button copies your result as colored squares, without any letter, to send to your friends.
             </p>
         </>
     ),
@@ -43,7 +46,7 @@ const CONTENT = {
         <>
             <p>One word a day, the same for everybody. 5 letters, 6 tries.</p>
             <p>You only get one attempt per day: if you leave and come back, you pick up where you stopped. When the game is over, a counter shows the time left before the next word (it changes at midnight UTC).</p>
-            <p>Your score is sent to the daily leaderboard.</p>
+            <p>Your score is sent to the daily leaderboard, which only shows the players of today's word: ranked by points. A counter on the page shows how many players found the word today.</p>
         </>
     ),
     classic: (
@@ -56,13 +59,14 @@ const CONTENT = {
     custom: (
         <>
             <p>Your rules. Choose the length of the word (3 to 10), the number of tries (3 to 10) and the number of grids (1 to 10).</p>
-            <p>It plays like classic: endless, until you miss a word. Since the difficulty changes, custom games are not on the leaderboard.</p>
+            <p>It plays like classic: endless, until you miss a word. Your settings are saved for your next visit, and the length is in the address of the game (/custom/7 is a game with 7 letters). The leaderboard shows the length of each game and can be filtered by length.</p>
         </>
     ),
     hardcore: (
         <>
             <p>4 grids at the same time, 9 tries, 5 letters.</p>
             <p>Every guess is played on all the grids at once, and each grid has its own hidden word. A grid stops filling as soon as its word is found. You win when the 4 words are found.</p>
+            <p><strong>Points:</strong> a win is worth x4 the normal points, one x1 for each grid: (tries left + 1) x 100 x 4. Nothing if you run out of tries. Hardcore has its own leaderboard.</p>
             <p>On the keyboard, each key is split in 4 stripes: one for each grid.</p>
         </>
     ),

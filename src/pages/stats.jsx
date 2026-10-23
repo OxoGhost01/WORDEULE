@@ -1,11 +1,19 @@
+import { useState } from 'react'
+import Tabs from '../components/tabs.jsx'
 import { getScores } from '../data/storage.js'
 import computeStats from '../game/stats.js'
+import { GAME_MODES, CUSTOM } from '../config.js'
 
-const MAX_TRIES = 6 // classic
+// Every mode has its own stats: the rules of the mode (tries, endless or not) come from the config
+const RULES = { ...GAME_MODES, custom: CUSTOM }
+const TABS = Object.keys(RULES).map((mode) => ({ id: mode, label: mode }))
 
 export default function Stats() {
+    const [mode, setMode] = useState('classic')
+
     // numbers computed from the games saved in this browser
-    const stats = computeStats(getScores(), 'classic', MAX_TRIES)
+    const { maxTries, endless } = RULES[mode]
+    const stats = computeStats(getScores(), mode, maxTries, endless)
     const most = Math.max(1, ...stats.distribution) // the longest bar
 
     // the big numbers at the top
@@ -20,8 +28,9 @@ export default function Stats() {
     return (
         <section className="stats flex w-full max-w-2xl flex-col items-center gap-8">
             <h2 className="page-title">Stats</h2>
-            <p className="text-sm font-bold uppercase">Classic mode, on this device</p>
-            {stats.played === 0 && <p className="notice">No classic game yet, go play one !</p>}
+            <Tabs tabs={TABS} active={mode} onChange={setMode} />
+            <p className="text-sm font-bold uppercase">{mode} mode, on this device</p>
+            {stats.played === 0 && <p className="notice">No {mode} game yet, go play one !</p>}
             <ul className="grid w-full grid-cols-2 gap-5">
                 {cards.map((card, i) => (
                     <li
@@ -40,7 +49,7 @@ export default function Stats() {
                 <ol className="flex flex-col gap-2">
                     {stats.distribution.map((count, i) => (
                         <li key={i} className="flex items-center gap-3">
-                            <span className="w-4 font-display text-lg font-extrabold">{i + 1}</span>
+                            <span className="w-6 font-display text-lg font-extrabold">{i + 1}</span>
                             <div className="flex flex-1 items-center gap-2">
                                 {count > 0 && <div className="h-7 border-[3px] border-ink bg-cobalt" style={{ width: `${(count / most) * 85}%` }} />}
                                 <span className="font-bold">{count}</span>

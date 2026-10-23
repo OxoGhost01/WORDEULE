@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import Game from '../components/game.jsx'
-import { loadWords, randomWord } from '../game/words.js'
+import { loadWordLists, randomWord } from '../game/words.js'
+import { GAME_MODES } from '../config.js'
 
-const WORD_LENGTH = 5
-const MAX_TRIES = 6
+const { wordLength: WORD_LENGTH, maxTries: MAX_TRIES } = GAME_MODES.locked
 
 export default function Locked({ game }) {
     const { mode, start } = game
@@ -12,8 +12,8 @@ export default function Locked({ game }) {
     // start a game with a new word (keepScore: a win goes on with the same score)
     async function launch(keepScore = false) {
         try {
-            const words = await loadWords(WORD_LENGTH)
-            start('locked', words, [randomWord(words)], MAX_TRIES, keepScore)
+            const { words, answers } = await loadWordLists(WORD_LENGTH)
+            start('locked', words, [randomWord(answers)], MAX_TRIES, keepScore)
         } catch (e) {
             setError(e.message)
         }
@@ -22,8 +22,8 @@ export default function Locked({ game }) {
     // start a game as soon as the page opens
     useEffect(() => {
         let cancelled = false // the page may be left before the word is loaded
-        loadWords(WORD_LENGTH)
-            .then((words) => { if (!cancelled) start('locked', words, [randomWord(words)], MAX_TRIES) })
+        loadWordLists(WORD_LENGTH)
+            .then(({ words, answers }) => { if (!cancelled) start('locked', words, [randomWord(answers)], MAX_TRIES) })
             .catch((e) => { if (!cancelled) setError(e.message) })
         return () => { cancelled = true }
     }, [start])
