@@ -73,3 +73,4 @@
 - [x] Toutes les valeurs de réglage (règles des modes, points, limites, adresses...) sont dans un fichier de configuration (`src/config.js` pour le site, `server/config.js` pour le serveur)
 - [x] Des statistiques pour chaque mode, avec des onglets
 - [x] Un README complet : règles, modes, score, installation, structure du projet, fonctionnement, API, tests, déploiement et limites connues
+- [ ] Une page 404 pour les adresses qui n'existent pas, avec un lien de retour au menu

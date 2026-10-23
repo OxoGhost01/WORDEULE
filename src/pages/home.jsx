@@ -11,6 +11,7 @@ import Stats from './stats.jsx'
 import HowToPlay from './howtoplay.jsx'
 import Leaderboard from './leaderboard.jsx'
 import About from './about.jsx'
+import NotFound from './notfound.jsx'
 import Welcome from './welcome.jsx'
 import { getUsername, saveUsername } from '../data/storage.js'
 import { DEFAULT_MAX_TRIES } from '../config.js'
@@ -48,26 +49,25 @@ function Home() {
   const game = { mode, answers, words: mots, guesses, setGuesses, guess, setGuess, score, setScore, maxTries, start }
 
   return (
-    <BrowserRouter>
-      <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-8">
-        <Header />
-        <main className="flex flex-1 flex-col items-center pt-6">
-        <Routes>
-          <Route path="/" element={<Menu />} />
-          <Route path="/how-to-play" element={<HowToPlay />} />
-          <Route path="/daily" element={<Daily game={game} />} />
-          <Route path="/classic" element={<Classic game={game} />} />
-          <Route path="/custom/:length?" element={<Custom game={game} />} />
-          <Route path="/hardcore" element={<Hardcore game={game} />} />
-          <Route path="/locked" element={<Locked game={game} />} />
-          <Route path="/stats" element={<Stats />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
-        </main>
-        <Footer />
-      </div>
-    </BrowserRouter>
+    <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-8">
+      <Header />
+      <main className="flex flex-1 flex-col items-center pt-6">
+      <Routes>
+        <Route path="/" element={<Menu />} />
+        <Route path="/how-to-play" element={<HowToPlay />} />
+        <Route path="/daily" element={<Daily game={game} />} />
+        <Route path="/classic" element={<Classic game={game} />} />
+        <Route path="/custom/:length?" element={<Custom game={game} />} />
+        <Route path="/hardcore" element={<Hardcore game={game} />} />
+        <Route path="/locked" element={<Locked game={game} />} />
+        <Route path="/stats" element={<Stats />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/about" element={<About />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      </main>
+      <Footer />
+    </div>
   )
 }
 
