@@ -29,19 +29,21 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
     // text to share (colors only, no letters); copiedText remembers which text was copied
     const [copiedText, setCopiedText] = useState('')
     const text = over ? shareText(mode === 'daily' ? `daily ${todayKey()}` : mode, answers, guesses, maxTries) : ''
-    // share with the native share sheet of the phone when there is one, otherwise copy the text and the link
+    // on a phone (touch screen): the native share sheet. Elsewhere (computers) it is not good: Chrome on Windows
+    // would only copy the link. So the text and the link are copied.
     async function share() {
-        const url = window.location.origin
-        if (navigator.share) {
+        const message = `${text}\n${window.location.origin}` // the link is in the text, some apps ignore a separate link
+        const onPhone = navigator.share && window.matchMedia('(pointer: coarse)').matches
+        if (onPhone) {
             try {
-                await navigator.share({ title: 'WORDEULE', text, url })
+                await navigator.share({ title: 'WORDEULE', text: message })
             } catch {
                 // the player closed the share sheet
             }
             return
         }
         try {
-            await navigator.clipboard.writeText(`${text}\n${url}`)
+            await navigator.clipboard.writeText(message)
             setCopiedText(text)
         } catch {
             setCopiedText('') // clipboard not allowed

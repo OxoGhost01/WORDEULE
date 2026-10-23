@@ -68,7 +68,7 @@
 - [x] Un compteur sur la page du mot du jour indique combien de joueurs ont trouvé le mot du jour ; il repart à zéro quand le mot change
 - [x] Un classement global, partagé entre tous les joueurs, grâce à un petit serveur (Express, scores dans un fichier JSON) déployé avec Docker, avec un onglet par mode
 - [x] Un écran de règles avec un onglet par mode
-- [x] Le partage utilise la feuille de partage native du téléphone quand le navigateur la propose, sinon le texte et le lien sont copiés
+- [x] Le partage utilise la feuille de partage native sur téléphone (écran tactile), et sur ordinateur le texte et le lien sont copiés dans le presse-papiers
 - [x] Les mots à trouver viennent d'une liste de mots courants (les 10 000 mots les plus fréquents), alors que les propositions sont vérifiées avec le dictionnaire complet ; valable pour tous les modes et toutes les longueurs
 - [x] Toutes les valeurs de réglage (règles des modes, points, limites, adresses...) sont dans un fichier de configuration (`src/config.js` pour le site, `server/config.js` pour le serveur)
 - [x] Des statistiques pour chaque mode, avec des onglets
