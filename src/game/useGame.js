@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import roundScore, { scoreMultiplier } from './score.js'
-import evaluate from './evaluate.js'
+import { normalize } from './text.js'
 import { fixedLetters, requiredCounts, missingLetters, mergeRow } from './locked.js'
 
 // Rules and typing of a game, working on the state of Home (the `game` object).
@@ -34,8 +34,8 @@ export default function useGame({ mode, answers, words, guesses, setGuesses, gue
             setGuess(guess.slice(0, -1))
         } else if (key === 'Enter') {
             // the word must be complete, then a real word
-            if (guess.length !== typedLength) return refuse('Not enough letters')
-            if (!validWords.has(row)) return refuse('Not in the word list')
+            if (guess.length !== typedLength) return refuse('game.notEnough')
+            if (!validWords.has(row)) return refuse('game.notInList')
             if (locked && missingRequired) { 
                 // logic specific to the locked mode
                 // no message: the "must use" letters flash instead
@@ -50,9 +50,10 @@ export default function useGame({ mode, answers, words, guesses, setGuesses, gue
             if (answers.every((a) => next.includes(a))) {
                 setScore((s) => s + roundScore(next.length, maxTries, scoreMultiplier(mode, wordLength, answers.length)))
             }
-        } else if (/^[a-zA-Z]$/.test(key) && guess.length < typedLength) {
+        } else if (/^[A-Z]$/.test(normalize(key)) && key.length === 1 && guess.length < typedLength) {
+            // a letter, with or without accent: é counts as E
             clearText()
-            setGuess(guess + key.toUpperCase())
+            setGuess(guess + normalize(key))
         }
     }, [status, mode, wordLength, answers, typedLength, locked, row, missingRequired, guesses, guess, maxTries, validWords, setGuesses, setGuess, setScore])
 

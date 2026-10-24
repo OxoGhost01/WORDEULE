@@ -1,0 +1,123 @@
+// English texts. Fr.js has the same keys. {name} is replaced by a value, **text** is displayed in bold.
+export default {
+    // pages and modes (the names are also used as titles)
+    'modes.daily': 'Daily',
+    'modes.classic': 'Classic',
+    'modes.custom': 'Custom',
+    'modes.hardcore': 'Hardcore',
+    'modes.locked': 'Locked',
+    'pages.howToPlay': 'How to play',
+    'pages.stats': 'Stats',
+    'pages.leaderboard': 'Leaderboard',
+    'pages.about': 'About',
+
+    // menu
+    'menu.howToPlay': 'The rules, and what each mode changes.',
+    'menu.daily': 'One word. One shot. The same for everybody.',
+    'menu.classic': "Endless words. Just don't lose.",
+    'menu.custom': 'You pick the length, the tries, the grids.',
+    'menu.hardcore': 'Four grids at once. Nine tries.',
+    'menu.locked': 'Found letters are locked in. You must use them.',
+    'menu.stats': 'Your numbers, mode by mode.',
+    'menu.leaderboard': 'The best players, for everyone.',
+    'menu.about': 'Who, why, how.',
+
+    // header, footer, language switch
+    'header.home': 'WORDEULE, home',
+    'footer.madeBy': 'All rights reserved, made with love by',
+    'language.label': 'Language',
+
+    // welcome
+    'welcome.title': 'Welcome to Wordeule !',
+    'welcome.intro': "Welcome to a way better version of the famous game WORDLE. This is way better than anything you've ever seen until now. Play this with your friends, family, dog, or even benbi (at your own risk). Have fun with many different modes, and pick from any possible level of difficulty that you could wish for with the custom mode. But first...",
+    'welcome.username': 'Choose a username',
+    'welcome.continue': 'Continue',
+
+    // about
+    'about.intro': 'WORDEULE is a small game made by 2 friends for a class project. The goal is not to make something professional or fancy, but just something fun, with a lot of possibilities.',
+    'about.outro': 'Just browse the menu, play the different modes, try to grind your way to the top, have fun and share your scores with your friends!',
+
+    // 404
+    'notFound.text': "Not in the word list: this page doesn't exist.",
+    'notFound.back': 'Back to the menu',
+
+    // game
+    'game.notEnough': 'Not enough letters',
+    'game.notInList': 'Not in the word list',
+    'game.mustUse': 'Must use',
+    'game.won': 'Won in {tries} / {max}',
+    'game.lostOne': 'Lost, the word was {words}',
+    'game.lostMany': 'Lost, the words were {words}',
+    'game.score': 'Score: {score}',
+    'game.next': 'Next word',
+    'game.newGame': 'New game',
+    'game.share': 'Share',
+    'game.copied': 'Copied !',
+    'wiki.link': 'What does {word} mean ?',
+    'keyboard.enter': 'ENTER',
+    'keyboard.backspace': '⌫',
+    'errors.words': 'Could not load the words. Check your connection and try again.',
+
+    // daily
+    'countdown.next': 'Next word in',
+    'daily.foundOne': '{count} player found today\'s word',
+    'daily.foundMany': '{count} players found today\'s word',
+
+    // custom
+    'custom.length': 'Word length',
+    'custom.tries': 'Max tries',
+    'custom.grids': 'Number of grids',
+    'custom.start': 'Start',
+    'custom.change': 'Change difficulty',
+
+    // stats
+    'stats.mode': '{mode} mode, on this device',
+    'stats.empty': 'No {mode} game yet, go play one !',
+    'stats.played': 'Games played',
+    'stats.victories': 'Victories',
+    'stats.streak': 'Win streak',
+    'stats.streakNote': 'in a row, right now',
+    'stats.bestStreak': 'Best streak',
+    'stats.bestStreakNote': 'in a row, ever',
+    'stats.points': 'Total points',
+    'stats.distribution': 'Victories by number of tries',
+
+    // leaderboard
+    'leaderboard.mine': 'On this device',
+    'leaderboard.today': 'Word of {date}',
+    'leaderboard.loading': 'Loading...',
+    'leaderboard.error': 'Could not load the leaderboard',
+    'leaderboard.empty': 'Nobody here yet, be the first !',
+    'leaderboard.none': 'No completed games yet.',
+    'leaderboard.tries': '{count} tries',
+    'outcome.won': 'won',
+    'outcome.lost': 'lost',
+
+    // how to play
+    'howto.tab.basics': 'Basics',
+    'howto.exampleWord': 'CRANE',
+    'howto.basics.welcome': 'Welcome to WORDEULE !',
+    'howto.basics.goal': 'In this game, you have to find the hidden word in a limited number of tries. Each guess must be a real English word of the right length.',
+    'howto.basics.colors': 'After each guess, every letter takes a color:',
+    'howto.basics.blue': '**Blue**: the letter is in the word, at this exact place.',
+    'howto.basics.yellow': '**Yellow**: the letter is in the word, but somewhere else.',
+    'howto.basics.black': '**Black**: the letter is not in the word (or all its copies are already found).',
+    'howto.basics.typing': 'Type with your keyboard or with the one on the screen, which also shows the state of every letter. Only the 26 letters of the alphabet are used.',
+    'howto.basics.points': 'A win gives more points the fewer tries you used: (tries left + 1) x 100. Harder games are worth more: x1.5 for 6 letters, x2 for 7 letters or more, x1.5 in locked mode, and x the number of grids (x4 in hardcore).',
+    'howto.basics.share': 'When a game ends, the Share button copies your result as colored squares, without any letter, to send to your friends.',
+    'howto.daily.rules': 'One word a day, the same for everybody. 5 letters, 6 tries.',
+    'howto.daily.attempt': 'You only get one attempt per day: if you leave and come back, you pick up where you stopped. When the game is over, a counter shows the time left before the next word (it changes at midnight UTC).',
+    'howto.daily.leaderboard': "Your score is sent to the daily leaderboard, which only shows the players of today's word, ranked by points, with the number of tries each needed. A counter on the page shows how many players found the word today.",
+    'howto.classic.rules': 'The endless mode. 5 letters, 6 tries.',
+    'howto.classic.run': 'Find a word, and a new one comes right away. Your score keeps growing with every word you find. The first word you miss ends the run, and the score goes back to 0.',
+    'howto.classic.scores': 'Your best score is on the classic leaderboard, and your numbers are on the stats page.',
+    'howto.custom.rules': 'Your rules. Choose the length of the word (3 to 10), the number of tries (3 to 10) and the number of grids (1 to 10).',
+    'howto.custom.saved': 'It plays like classic: endless, until you miss a word. Your settings are saved for your next visit, and the length is in the address of the game (/custom/7 is a game with 7 letters). Custom games are not on the leaderboard, since their rules change every game.',
+    'howto.hardcore.rules': '4 grids at the same time, 9 tries, 5 letters.',
+    'howto.hardcore.grids': 'Every guess is played on all the grids at once, and each grid has its own hidden word. A grid stops filling as soon as its word is found. You win when the 4 words are found.',
+    'howto.hardcore.points': '**Points:** a win is worth x4 the normal points, one x1 for each grid: (tries left + 1) x 100 x 4. Nothing if you run out of tries. Hardcore has its own leaderboard.',
+    'howto.hardcore.keyboard': 'On the keyboard, each key is split in 4 stripes: one for each grid.',
+    'howto.locked.rules': '5 letters, 6 tries, and some rules to follow.',
+    'howto.locked.fixed': "A letter found at its place is **locked** there: it is filled again on every new line and you can't remove it.",
+    'howto.locked.used': 'A letter found at the wrong place must be **used** in your next guess. The "Must use" letters under the grid show what you still have to place, and flash if you try to send a word without them.',
+}

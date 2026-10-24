@@ -1,0 +1,123 @@
+// Textes français. Les clés sont les mêmes que dans en.js. {name} est remplacé par une valeur, **texte** s'affiche en gras.
+export default {
+    // pages et modes (les noms servent aussi de titres)
+    'modes.daily': 'Mot du jour',
+    'modes.classic': 'Classique',
+    'modes.custom': 'Personnalisé',
+    'modes.hardcore': 'Hardcore',
+    'modes.locked': 'Verrouillé',
+    'pages.howToPlay': 'Comment jouer',
+    'pages.stats': 'Statistiques',
+    'pages.leaderboard': 'Classement',
+    'pages.about': 'À propos',
+
+    // menu
+    'menu.howToPlay': 'Les règles, et ce que change chaque mode.',
+    'menu.daily': 'Un mot. Un essai. Le même pour tout le monde.',
+    'menu.classic': 'Des mots sans fin. Ne perdez pas.',
+    'menu.custom': 'Vous choisissez la longueur, les essais, les grilles.',
+    'menu.hardcore': 'Quatre grilles en même temps. Neuf essais.',
+    'menu.locked': 'Les lettres trouvées sont verrouillées. Vous devez les utiliser.',
+    'menu.stats': 'Vos chiffres, mode par mode.',
+    'menu.leaderboard': 'Les meilleurs joueurs, pour tout le monde.',
+    'menu.about': 'Qui, pourquoi, comment.',
+
+    // en-tête, pied de page, choix de la langue
+    'header.home': 'WORDEULE, accueil',
+    'footer.madeBy': 'Tous droits réservés, fait avec amour par',
+    'language.label': 'Langue',
+
+    // bienvenue
+    'welcome.title': 'Bienvenue sur Wordeule !',
+    'welcome.intro': "Bienvenue dans une version bien meilleure du célèbre jeu WORDLE. C'est bien mieux que tout ce que vous avez vu jusqu'ici. Jouez avec vos amis, votre famille, votre chien, ou même benbi (à vos risques et périls). Amusez-vous avec de nombreux modes, et choisissez le niveau de difficulté que vous voulez avec le mode personnalisé. Mais d'abord...",
+    'welcome.username': 'Choisissez un pseudo',
+    'welcome.continue': 'Continuer',
+
+    // à propos
+    'about.intro': "WORDEULE est un petit jeu fait par 2 amis pour un projet de cours. Le but n'est pas de faire quelque chose de professionnel ou de sophistiqué, mais juste quelque chose d'amusant, avec beaucoup de possibilités.",
+    'about.outro': "Parcourez le menu, essayez les différents modes, grimpez jusqu'au sommet, amusez-vous et partagez vos scores avec vos amis !",
+
+    // 404
+    'notFound.text': "Pas dans la liste de mots : cette page n'existe pas.",
+    'notFound.back': 'Retour au menu',
+
+    // jeu
+    'game.notEnough': 'Pas assez de lettres',
+    'game.notInList': 'Pas dans la liste de mots',
+    'game.mustUse': 'À utiliser',
+    'game.won': 'Gagné en {tries} / {max}',
+    'game.lostOne': 'Perdu, le mot était {words}',
+    'game.lostMany': 'Perdu, les mots étaient {words}',
+    'game.score': 'Score : {score}',
+    'game.next': 'Mot suivant',
+    'game.newGame': 'Nouvelle partie',
+    'game.share': 'Partager',
+    'game.copied': 'Copié !',
+    'wiki.link': 'Que signifie {word} ?',
+    'keyboard.enter': 'ENTRÉE',
+    'keyboard.backspace': '⌫',
+    'errors.words': 'Impossible de charger les mots. Vérifiez votre connexion et réessayez.',
+
+    // mot du jour
+    'countdown.next': 'Prochain mot dans',
+    'daily.foundOne': "{count} joueur a trouvé le mot du jour",
+    'daily.foundMany': "{count} joueurs ont trouvé le mot du jour",
+
+    // personnalisé
+    'custom.length': 'Longueur du mot',
+    'custom.tries': "Nombre d'essais",
+    'custom.grids': 'Nombre de grilles',
+    'custom.start': 'Commencer',
+    'custom.change': 'Changer la difficulté',
+
+    // statistiques
+    'stats.mode': 'Mode {mode}, sur cet appareil',
+    'stats.empty': 'Aucune partie en mode {mode} pour le moment, allez en jouer une !',
+    'stats.played': 'Parties jouées',
+    'stats.victories': 'Victoires',
+    'stats.streak': 'Série en cours',
+    'stats.streakNote': "de suite, en ce moment",
+    'stats.bestStreak': 'Meilleure série',
+    'stats.bestStreakNote': 'de suite, record',
+    'stats.points': 'Total des points',
+    'stats.distribution': "Victoires selon le nombre d'essais",
+
+    // classement
+    'leaderboard.mine': 'Sur cet appareil',
+    'leaderboard.today': 'Mot du {date}',
+    'leaderboard.loading': 'Chargement...',
+    'leaderboard.error': 'Impossible de charger le classement',
+    'leaderboard.empty': "Personne ici pour l'instant, soyez le premier !",
+    'leaderboard.none': 'Aucune partie terminée pour le moment.',
+    'leaderboard.tries': '{count} essais',
+    'outcome.won': 'gagné',
+    'outcome.lost': 'perdu',
+
+    // comment jouer
+    'howto.tab.basics': 'Bases',
+    'howto.exampleWord': 'TABLE',
+    'howto.basics.welcome': 'Bienvenue sur WORDEULE !',
+    'howto.basics.goal': "Dans ce jeu, vous devez trouver le mot caché en un nombre limité d'essais. Chaque proposition doit être un vrai mot français de la bonne longueur.",
+    'howto.basics.colors': 'Après chaque proposition, chaque lettre prend une couleur :',
+    'howto.basics.blue': "**Bleu** : la lettre est dans le mot, à cette place exacte.",
+    'howto.basics.yellow': '**Jaune** : la lettre est dans le mot, mais à une autre place.',
+    'howto.basics.black': "**Noir** : la lettre n'est pas dans le mot (ou toutes ses copies sont déjà trouvées).",
+    'howto.basics.typing': "Tapez avec votre clavier ou avec celui de l'écran, qui montre aussi l'état de chaque lettre. Les accents ne se tapent pas : é compte comme e. Le mot est affiché avec ses accents à la fin de la partie.",
+    'howto.basics.points': "Une victoire rapporte plus de points quand vous utilisez moins d'essais : (essais restants + 1) x 100. Les parties plus difficiles valent plus : x1,5 pour 6 lettres, x2 pour 7 lettres ou plus, x1,5 en mode verrouillé, et x le nombre de grilles (x4 en hardcore).",
+    'howto.basics.share': "À la fin d'une partie, le bouton Partager copie votre résultat sous forme de carrés colorés, sans aucune lettre, à envoyer à vos amis.",
+    'howto.daily.rules': "Un mot par jour, le même pour tout le monde. 5 lettres, 6 essais.",
+    'howto.daily.attempt': "Vous n'avez qu'une tentative par jour : si vous partez et revenez, vous reprenez où vous vous étiez arrêté. Quand la partie est finie, un compteur indique le temps restant avant le prochain mot (il change à minuit UTC).",
+    'howto.daily.leaderboard': "Votre score est envoyé au classement du jour, qui ne montre que les joueurs du mot du jour, classés par points, avec le nombre d'essais de chacun. Un compteur sur la page indique combien de joueurs ont trouvé le mot aujourd'hui.",
+    'howto.classic.rules': 'Le mode sans fin. 5 lettres, 6 essais.',
+    'howto.classic.run': "Trouvez un mot, et un nouveau arrive tout de suite. Votre score grandit à chaque mot trouvé. Le premier mot raté met fin à la série, et le score retombe à 0.",
+    'howto.classic.scores': 'Votre meilleur score est dans le classement du mode classique, et vos chiffres sont sur la page des statistiques.',
+    'howto.custom.rules': "Vos règles. Choisissez la longueur du mot (3 à 10), le nombre d'essais (3 à 10) et le nombre de grilles (1 à 10).",
+    'howto.custom.saved': "Ça se joue comme le mode classique : sans fin, jusqu'à ce que vous ratiez un mot. Vos réglages sont gardés pour votre prochaine visite, et la longueur est dans l'adresse de la partie (/custom/7 est une partie avec 7 lettres). Les parties personnalisées ne sont pas dans le classement, car leurs règles changent à chaque partie.",
+    'howto.hardcore.rules': '4 grilles en même temps, 9 essais, 5 lettres.',
+    'howto.hardcore.grids': "Chaque proposition est jouée sur toutes les grilles à la fois, et chaque grille a son propre mot caché. Une grille s'arrête de se remplir dès que son mot est trouvé. Vous gagnez quand les 4 mots sont trouvés.",
+    'howto.hardcore.points': "**Points :** une victoire vaut x4 les points normaux, un x1 par grille : (essais restants + 1) x 100 x 4. Rien si vous n'avez plus d'essais. Le mode hardcore a son propre classement.",
+    'howto.hardcore.keyboard': "Sur le clavier, chaque touche est coupée en 4 bandes : une pour chaque grille.",
+    'howto.locked.rules': '5 lettres, 6 essais, et quelques règles à suivre.',
+    'howto.locked.fixed': "Une lettre trouvée à sa place est **verrouillée** : elle est remplie de nouveau à chaque nouvelle ligne et vous ne pouvez pas l'enlever.",
+    'howto.locked.used': "Une lettre trouvée à une mauvaise place doit être **utilisée** dans votre proposition suivante. Les lettres « À utiliser » sous la grille montrent ce qu'il vous reste à placer, et clignotent si vous essayez d'envoyer un mot sans elles.",
+}

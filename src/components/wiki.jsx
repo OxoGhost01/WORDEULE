@@ -1,15 +1,19 @@
+import useLanguage from '../i18n/useLanguage.js'
+import { LANGUAGES } from '../config.js'
 
+// Link to the Wiktionary of the language of the game, for a word written with its accents
 export default function Wiki({ word }) {
-    const lower = word.toLowerCase()
+    const { lang, t } = useLanguage()
+
     return (
         <section className="wiki">
             <a
                 className="font-bold underline decoration-4 decoration-pink underline-offset-4 hover:bg-pink"
-                href={`https://en.wiktionary.org/wiki/${lower}`}
+                href={`${LANGUAGES[lang].wiktionary}${encodeURIComponent(word.toLowerCase())}`}
                 target="_blank"
                 rel="noreferrer"
             >
-                What does {word} mean ?
+                {t('wiki.link', { word })}
             </a>
         </section>
     )

@@ -15,30 +15,37 @@ import NotFound from './notfound.jsx'
 import Welcome from './welcome.jsx'
 import { getUsername, saveUsername } from '../data/storage.js'
 import { DEFAULT_MAX_TRIES } from '../config.js'
-import { BrowserRouter, Route, Routes } from 'react-router'
+import useLanguage from '../i18n/useLanguage.js'
+import { Route, Routes } from 'react-router'
 
 // Root of the app: owns the state of the current game, shared by all the modes (only one runs at a time)
 function Home() {
+  const { lang } = useLanguage()
 
   const [mots, setMots] = useState([]) // Word list of the current game: possible answers and valid guesses
   const [mode, setMode] = useState("") // Current gamemode: daily, classic, custom
   const [guess, setGuess] = useState("") // Word being typed by the player
   const [score, setScore] = useState(0) // Score
-  const [answers, setAnswers] = useState([]) // Words to guess (one grid each)
+  const [answers, setAnswers] = useState([]) // Words to guess (one grid each), without accents
+  const [display, setDisplay] = useState({}) // How the words to guess are written, with accents: { ETE: 'ÉTÉ' }
+  const [gameLang, setGameLang] = useState(null) // Language of the current game
   const [guesses, setGuesses] = useState([]) // Words already submitted by the player
   const [maxTries, setMaxTries] = useState(DEFAULT_MAX_TRIES) // Number of tries allowed
   const [username, setUsername] = useState(getUsername) // saved in the browser, asked by Welcome the first time
 
-  // Launches a game: only one mode runs at a time, so they all share the same state (singleton)
-  const start = useCallback((newMode, newWords, newAnswers, newMaxTries = DEFAULT_MAX_TRIES, keepScore = false) => {
+  // Launches a game: only one mode runs at a time, so they all share the same state (singleton).
+  // words: the dictionary of the language (valid guesses), answers: the words to guess, display: their spelling with accents
+  const start = useCallback(({ mode: newMode, words, display: newDisplay, answers: newAnswers, maxTries: newMaxTries = DEFAULT_MAX_TRIES, keepScore = false }) => {
     setMode(newMode)
-    setMots(newWords)
+    setGameLang(lang)
+    setMots(words)
+    setDisplay(newDisplay)
     setAnswers(newAnswers)
     setMaxTries(newMaxTries)
     setGuesses([])
     setGuess("")
     if (!keepScore) setScore(0)
-  }, [])
+  }, [lang])
 
   // no username yet: show the welcome page instead of the game
   if (!username) {
@@ -46,7 +53,7 @@ function Home() {
   }
 
   // everything a mode needs to run a game, passed down as one prop
-  const game = { mode, answers, words: mots, guesses, setGuesses, guess, setGuess, score, setScore, maxTries, start }
+  const game = { mode, lang: gameLang, answers, display, words: mots, guesses, setGuesses, guess, setGuess, score, setScore, maxTries, start }
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-8">

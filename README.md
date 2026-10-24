@@ -1,6 +1,6 @@
 # WORDEULE
 
-WORDEULE is a Wordle-like word game made by 2 friends for a class project, with a lot more modes, a global leaderboard and a stamped-on-paper look.
+WORDEULE is a Wordle-like word game, **in English and in French**, made by 2 friends for a class project, with a lot more modes, a global leaderboard and a stamped-on-paper look.
 
 Available [here](https://wordeule.oxoghost.dev) !
 
@@ -14,6 +14,7 @@ See the presentations about the architectural choices of the game, and its state
   - [Contents](#contents)
   - [How to play](#how-to-play)
   - [Game modes](#game-modes)
+  - [Languages](#languages)
   - [Score](#score)
   - [Tech stack](#tech-stack)
   - [Run it on your computer](#run-it-on-your-computer)
@@ -28,7 +29,7 @@ See the presentations about the architectural choices of the game, and its state
 
 ## How to play
 
-Find the hidden English word in a limited number of tries. Each guess must be a real word of the right length. After each guess, every letter takes a color:
+Find the hidden word, in English or in French, in a limited number of tries. Each guess must be a real word of the right length. After each guess, every letter takes a color:
 
 | Color | Meaning |
 | --- | --- |
@@ -47,6 +48,16 @@ Type with the keyboard or with the one on the screen, which also shows the state
 | **Custom** | 3 to 10 | 3 to 10 | Your rules, including 1 to 10 grids. Endless like classic. The settings are saved, and the length is in the address (`/custom/7`). |
 | **Hardcore** | 5 | 9 | 4 grids at the same time. Every guess is played on all grids, a grid stops when its word is found, you win when all 4 are found. |
 | **Locked** | 5 | 6 | The hard mode. A letter found at its place is locked there and pre-filled on every new line. A letter found elsewhere must be used in the next guesses. |
+
+## Languages
+
+The whole game exists in English and in French. The language is chosen with the `EN | FR` buttons at the top of the pages that are not a game (menu, welcome, stats, leaderboard, rules...). It is saved in the browser, and the first time it follows the language of the browser.
+
+- **Separate scores.** The difficulty of the two languages can't be compared, so their scores are never mixed: each language has its own leaderboards, its own daily word and daily attempt, its own counter of players who found the word, and its own stats. A player can play both.
+- **Words.** English: the dictionary of [an-array-of-english-words](https://www.npmjs.com/package/an-array-of-english-words) and the [10,000 most common English words](https://github.com/first20hours/google-10000-english). French: the dictionary of [an-array-of-french-words](https://www.npmjs.com/package/an-array-of-french-words) and the most frequent words of the French [FrequencyWords](https://github.com/hermitdave/FrequencyWords) list (built from film subtitles). The dictionary checks the guesses, the common words that are also in the dictionary are the words to guess.
+- **Accents.** The game compares plain letters. A French word is typed without accents (`é` on the keyboard counts as `E`), and shown with its accents at the end of the game, with a link to its page on the French Wiktionary (`fr.wiktionary.org`) instead of the English one.
+- **Keyboard.** QWERTY in English, AZERTY in French.
+- **Texts.** All the texts are in [src/i18n/en.js](src/i18n/en.js) and [src/i18n/fr.js](src/i18n/fr.js), with the same keys. A component writes `t('game.won', { tries: 3, max: 6 })` and gets the text in the current language.
 
 The pages also include a **leaderboard** (global, one tab per mode except custom, whose rules change every game, with the number of tries of each result), **stats** (one tab per mode) and a **How to play** page.
 
@@ -69,7 +80,7 @@ In the endless modes the score of a run keeps growing until the first loss.
 - **Server:** Node.js and Express (a tiny leaderboard API, scores in a JSON file).
 - **Tests:** Vitest.
 - **Deployment:** Docker (2 containers) behind the nginx of a VPS.
-- **Words:** the English dictionary of the [an-array-of-english-words](https://www.npmjs.com/package/an-array-of-english-words) package to check the guesses, and the [10,000 most common English words](https://github.com/first20hours/google-10000-english) for the words to guess, both served by jsDelivr.
+- **Words:** a dictionary to check the guesses and a list of common words for the words to guess, in each language (see [Languages](#languages)), served by jsDelivr.
 
 ## Run it on your computer
 
@@ -104,6 +115,7 @@ Other commands:
 ```
 src/
   config.js            all the settings of the game (see below)
+  i18n/                the texts: en.js, fr.js, the translate function and the language provider/hook
   main.jsx             entry point
   index.css            Tailwind and the look of the game
   pages/               one file per page: home (state and routes), daily, classic, custom,
@@ -116,7 +128,9 @@ src/
     score.js           points and difficulty bonus
     stats.js           numbers of the stats page
     share.js           text of the shared result
-    words.js           loads the word lists, picks words
+    text.js            removes the accents of a word
+    words.js           loads the word lists of a language, picks words
+    useLauncher.js     starts the games of the endless modes
     *.test.js          automated tests
   data/
     storage.js         everything saved in the browser (localStorage)
@@ -142,7 +156,7 @@ docs/                  presentation, work split, checklist
 
 ## Configuration
 
-Every setting of the game is in [src/config.js](src/config.js): the rules of each mode, the limits of the custom mode, the score and its bonuses, the addresses of the word lists, the keyboard layout, the share squares, the daily settings... Change a value there instead of in the code. The server has its own file, [server/config.js](server/config.js), and the list of modes must be the same in both.
+Every setting of the game is in [src/config.js](src/config.js): the rules of each mode, the limits of the custom mode, the score and its bonuses, the languages (word lists, keyboard layout, Wiktionary), the share squares, the daily settings... Change a value there instead of in the code. The server has its own file, [server/config.js](server/config.js), and the lists of modes and of languages must be the same in both.
 
 ## The server and its API
 
@@ -150,11 +164,11 @@ The server keeps the best score of every player. A result only replaces the prev
 
 | Route | What it does |
 | --- | --- |
-| `GET /api/scores/:mode` | The best players of a mode. For `daily`, only the players of today's word. |
-| `POST /api/scores` | Sends a result: `{ username, mode, score, tries }` |
-| `GET /api/daily/count` | Number of players who found today's word |
+| `GET /api/scores/:lang/:mode` | The best players of a mode in a language (`en` or `fr`). For `daily`, only the players of today's word. |
+| `POST /api/scores` | Sends a result: `{ username, mode, lang, score, tries }` |
+| `GET /api/daily/count/:lang` | Number of players who found today's word in a language |
 
-The server checks the mode, the score, the number of tries and the username. Modes: `daily`, `classic`, `hardcore`, `locked` (custom games are not ranked).
+The server checks the mode, the language, the score, the number of tries and the username. Results saved before there were two languages count as English. Modes: `daily`, `classic`, `hardcore`, `locked` (custom games are not ranked).
 
 ## Tests
 
@@ -162,7 +176,7 @@ The server checks the mode, the score, the number of tries and the username. Mod
 npm test
 ```
 
-The tests are next to the code they check (`src/game/*.test.js`): coloring of the letters (with duplicates in the guess and in the word), the rules of the locked mode, the score and its bonuses, the stats, the choice of the answers among the common words, and the shared text.
+The tests are next to the code they check (`src/game/*.test.js`): coloring of the letters (with duplicates in the guess and in the word), the rules of the locked mode, the score and its bonuses, the stats, the choice of the answers among the common words (including French words with accents), the removal of the accents, the texts of the translations, and the shared text.
 
 ## Deployment
 
@@ -182,7 +196,9 @@ Before a deployment, make sure `package-lock.json` is up to date (`npm install`)
 - A score can be faked by sending a request to the API, and a username is not protected. A real fix needs accounts and a server that checks the games.
 - The daily word is computed in the browser, so it can be found by reading the code.
 - The daily attempt is saved in the browser: clearing the data or using another browser gives a new one.
-- The words to guess come from a list of words that are common on the web: it has plurals and some web words (SEARCH, ONLINE...) and it is not curated like the official Wordle list.
+- The words to guess come from lists of common words: the English one comes from the web and has plurals and some web words (SEARCH, ONLINE...), the French one comes from film subtitles and has verb forms and a few English words. Neither is curated like the official Wordle list.
+- The French dictionary is a 4.5 MB file, downloaded only when French is played.
+- Words with `œ` or a hyphen (`cœur`, `porte-clés`) are not in the French lists.
 - Scores are stored in a JSON file, which is enough for a few players but not for many.
 
 ## Authors

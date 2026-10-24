@@ -1,14 +1,43 @@
 // All the settings of the game in one place: change a value here, not in the code.
 // (The server has its own settings in server/config.js.)
 
-// --- Words ---------------------------------------------------------------------------------------
+// --- Languages -----------------------------------------------------------------------------------
 
-// The dictionary: every English word, used to check the guesses
-export const DICTIONARY_URL = 'https://cdn.jsdelivr.net/npm/an-array-of-english-words@2.0.0/index.json'
+export const DEFAULT_LANGUAGE = 'en'
 
-// The 10,000 most common English words (Google): the words to guess are taken from it, among the ones
-// that are in the dictionary. The address is pinned to an exact version, so the daily word never changes by accident.
-export const COMMON_WORDS_URL = 'https://cdn.jsdelivr.net/gh/first20hours/google-10000-english@d0736d492489198e4f9d650c7ab4143bc14c1e9e/google-10000-english-no-swears.txt'
+// What depends on the language of the game (the texts are in src/i18n):
+// - dictionaryUrl: every word of the language, used to check the guesses
+// - commonWordsUrl: the most common words (the first token of each line), the words to guess are taken from them
+//   among the ones that are in the dictionary. commonWordsLimit: how many of them are used (the list starts with
+//   the most frequent). The addresses are pinned to an exact version, so the daily word never changes by accident.
+// - keyboardRows: layout of the on-screen keyboard
+// - wiktionary: where the link to the meaning of the word goes
+export const LANGUAGES = {
+    en: {
+        label: 'English',
+        dictionaryUrl: 'https://cdn.jsdelivr.net/npm/an-array-of-english-words@2.0.0/index.json',
+        commonWordsUrl: 'https://cdn.jsdelivr.net/gh/first20hours/google-10000-english@d0736d492489198e4f9d650c7ab4143bc14c1e9e/google-10000-english-no-swears.txt',
+        commonWordsLimit: 10000,
+        keyboardRows: [ // QWERTY
+            ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+            ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+            ['Enter', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Backspace'],
+        ],
+        wiktionary: 'https://en.wiktionary.org/wiki/',
+    },
+    fr: {
+        label: 'Français',
+        dictionaryUrl: 'https://cdn.jsdelivr.net/npm/an-array-of-french-words@2.0.0/index.json',
+        commonWordsUrl: 'https://cdn.jsdelivr.net/gh/hermitdave/FrequencyWords@525f9b560de45753a5ea01069454e72e9aa541c6/content/2018/fr/fr_50k.txt',
+        commonWordsLimit: 12000,
+        keyboardRows: [ // AZERTY
+            ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+            ['Q', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M'],
+            ['Enter', 'W', 'X', 'C', 'V', 'B', 'N', 'Backspace'],
+        ],
+        wiktionary: 'https://fr.wiktionary.org/wiki/',
+    },
+}
 
 // --- Game modes ----------------------------------------------------------------------------------
 
@@ -68,9 +97,5 @@ export const DAILY = {
 // Squares of the shared result
 export const SHARE_EMOJI = { correct: '🟦', present: '🟨', absent: '⬛' }
 
-// Layout of the on-screen keyboard
-export const KEYBOARD_ROWS = [
-    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['Enter', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'Backspace'],
-]
+// The pages where a game is played: the language can't be changed there (it would break the game in progress)
+export const GAME_PAGES = ['/daily', '/classic', '/custom', '/hardcore', '/locked']

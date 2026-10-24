@@ -6,11 +6,13 @@ import Wiki from '../components/wiki.jsx'
 import { saveScore, todayKey } from '../data/storage.js'
 import shareText from '../game/share.js'
 import { sendScore } from '../data/api.js'
+import useLanguage from '../i18n/useLanguage.js'
 
 // One round: grid + typing + end message. onNext (after a win) and onRestart (after a loss) are optional.
 // saveResult false: the finished game is only displayed (daily game restored after a refresh), not saved again.
 export default function Game({ game, onNext, onRestart, saveResult = true }) {
-    const { mode, answers, guesses, score, maxTries } = game
+    const { t } = useLanguage()
+    const { mode, lang, answers, display, guesses, score, maxTries } = game // lang: language of this game
     const { status, onKey, row, fixed, required, feedback } = useGame(game)
     const savedResult = useRef(false)
 
@@ -19,16 +21,21 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
         if (status === 'playing' || status === 'idle') {
             savedResult.current = false
         } else if (!savedResult.current) {
-            if (saveResult) sendScore(saveScore({ mode, score, outcome: status, tries: guesses.length }))
+            if (saveResult) sendScore(saveScore({ mode, lang, score, outcome: status, tries: guesses.length }))
             savedResult.current = true
         }
-    }, [mode, score, status, saveResult, guesses.length, answers])
+    }, [mode, lang, score, status, saveResult, guesses.length, answers])
 
     const over = status === 'won' || status === 'lost'
 
+    // the words are compared without accents, but shown with their accents
+    const spelled = (word) => display[word] ?? word
+    const missed = answers.filter((a) => !guesses.includes(a)).map(spelled)
+
     // text to share (colors only, no letters); copiedText remembers which text was copied
     const [copiedText, setCopiedText] = useState('')
-    const text = over ? shareText(mode === 'daily' ? `daily ${todayKey()}` : mode, answers, guesses, maxTries) : ''
+    const title = `${lang.toUpperCase()} ${t(`modes.${mode}`)}${mode === 'daily' ? ` ${todayKey()}` : ''}`
+    const text = over ? shareText(title, answers, guesses, maxTries) : ''
     // on a phone (touch screen): the native share sheet. Elsewhere (computers) it is not good: Chrome on Windows
     // would only copy the link. So the text and the link are copied.
     async function share() {
@@ -65,10 +72,10 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
             </div>
             {/* refused word message, and the letters the locked mode asks to use */}
             <div className="flex min-h-9 flex-col items-center gap-2">
-                {feedback.text && <p className="notice">{feedback.text}</p>}
+                {feedback.text && <p className="notice">{t(feedback.text)}</p>}
                 {required.length > 0 && !over && (
                     <p key={feedback.pulse} className={`flex items-center gap-2 text-sm font-bold uppercase ${feedback.alert ? 'shake' : ''}`}>
-                        Must use
+                        {t('game.mustUse')}
                         {required.map((letter, i) => (
                             <span key={i} className={`grid size-7 place-items-center border-2 border-ink bg-sun font-display ${feedback.alert ? 'flash' : ''}`}>{letter}</span>
                         ))}
@@ -78,14 +85,14 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
             <Keyboard answers={answers} guesses={guesses} onKey={onKey} />
             {over && (
                 <div className="flex flex-col items-center gap-4">
-                    {status === 'won' && <p className="stamp border-cobalt text-cobalt">Won in {guesses.length} / {maxTries}</p>}
-                    {status === 'lost' && <p className="stamp border-pink text-pink">Lost, the {answers.length > 1 ? 'words were' : 'word was'} {answers.filter((a) => !guesses.includes(a)).join(', ')}</p>}
-                    <p className="font-display text-2xl font-extrabold uppercase">Score: {score}</p>
-                    {status === 'won' && onNext && <button className="btn" onClick={onNext}>Next word</button>}
-                    <button className="btn bg-card" onClick={share}>{copiedText === text ? 'Copied !' : 'Share'}</button>
-                    {status === 'lost' && onRestart && <button className="btn bg-pink" onClick={onRestart}>New game</button>}
+                    {status === 'won' && <p className="stamp border-cobalt text-cobalt">{t('game.won', { tries: guesses.length, max: maxTries })}</p>}
+                    {status === 'lost' && <p className="stamp border-pink text-pink">{t(answers.length > 1 ? 'game.lostMany' : 'game.lostOne', { words: missed.join(', ') })}</p>}
+                    <p className="font-display text-2xl font-extrabold uppercase">{t('game.score', { score })}</p>
+                    {status === 'won' && onNext && <button className="btn" onClick={onNext}>{t('game.next')}</button>}
+                    <button className="btn bg-card" onClick={share}>{copiedText === text ? t('game.copied') : t('game.share')}</button>
+                    {status === 'lost' && onRestart && <button className="btn bg-pink" onClick={onRestart}>{t('game.newGame')}</button>}
                     <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
-                        {answers.map((word) => <Wiki key={word} word={word} />)}
+                        {answers.map((word) => <Wiki key={word} word={spelled(word)} />)}
                     </div>
                 </div>
             )}

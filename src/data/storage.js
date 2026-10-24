@@ -1,8 +1,15 @@
-// Everything saved in the browser (localStorage), in one entry: username, played games, daily progress, settings
-import { STORAGE_KEY, CUSTOM, DAILY } from '../config.js'
+// Everything saved in the browser (localStorage), in one entry: username, language, played games, daily progress, settings
+import { STORAGE_KEY, CUSTOM, DAILY, LANGUAGES, DEFAULT_LANGUAGE } from '../config.js'
 
 // Nothing saved yet
-const emptyData = () => ({ username: '', scores: [], daily: null, settings: {} })
+const emptyData = () => ({ username: '', language: null, scores: [], daily: {}, settings: {} })
+
+// The daily progress of each language: { en: { date, guesses }, fr: { date, guesses } }
+// (it used to be a single { date, guesses }, played in English)
+function readDaily(daily) {
+	if (daily && typeof daily.date === 'string') return { [DEFAULT_LANGUAGE]: daily }
+	return daily && typeof daily === 'object' ? daily : {}
+}
 
 // Reads the saved data; anything missing or broken falls back to an empty value
 function readData() {
@@ -13,8 +20,9 @@ function readData() {
 		const data = JSON.parse(stored)
 		return {
 			username: typeof data.username === 'string' ? data.username : '',
+			language: data.language in LANGUAGES ? data.language : null,
 			scores: Array.isArray(data.scores) ? data.scores : [],
-			daily: data.daily && typeof data.daily.date === 'string' && Array.isArray(data.daily.guesses) ? data.daily : null,
+			daily: readDaily(data.daily),
 			settings: data.settings && typeof data.settings === 'object' ? data.settings : {},
 		}
 	} catch {
@@ -41,16 +49,30 @@ export function saveUsername(username) {
 	return data.username
 }
 
-export function getScores() {
-	return readData().scores
+// The language chosen by the player (null the first time)
+export function getLanguage() {
+	return readData().language
+}
+
+export function saveLanguage(lang) {
+	const data = readData()
+	data.language = lang
+	writeData(data)
+}
+
+// The games played in a language: the scores of two languages are never mixed, their difficulty can't be compared
+// (the games saved before there were two languages were in English)
+export function getScores(lang) {
+	return readData().scores.filter((result) => (result.lang ?? DEFAULT_LANGUAGE) === lang)
 }
 
 // Saves the result of a finished game (a word) and returns it
-export function saveScore({ mode, score, outcome, tries }) {
+export function saveScore({ mode, lang, score, outcome, tries }) {
 	const data = readData()
 	const result = {
 		username: data.username || 'Player',
 		mode,
+		lang,
 		score,
 		outcome,
 		tries,
@@ -66,15 +88,16 @@ export function todayKey(date = new Date()) {
 	return date.toISOString().slice(0, 10)
 }
 
-// Guesses already played on the daily word of that date (none if it is a new day)
-export function getDailyProgress(date) {
-	const { daily } = readData()
-	return daily && daily.date === date ? daily.guesses : []
+// Guesses already played on the daily word of that date in a language (none if it is a new day).
+// Each language has its own daily word, so its own attempt.
+export function getDailyProgress(date, lang) {
+	const progress = readData().daily[lang]
+	return progress && progress.date === date ? progress.guesses : []
 }
 
-export function saveDailyProgress(date, guesses) {
+export function saveDailyProgress(date, guesses, lang) {
 	const data = readData()
-	data.daily = { date, guesses }
+	data.daily[lang] = { date, guesses }
 	writeData(data)
 }
 

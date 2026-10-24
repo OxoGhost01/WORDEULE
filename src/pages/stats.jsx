@@ -3,34 +3,36 @@ import Tabs from '../components/tabs.jsx'
 import { getScores } from '../data/storage.js'
 import computeStats from '../game/stats.js'
 import { GAME_MODES, CUSTOM } from '../config.js'
+import useLanguage from '../i18n/useLanguage.js'
 
-// Every mode has its own stats: the rules of the mode (tries, endless or not) come from the config
+// Every mode has its own stats, in the language being played: the rules of the mode (tries, endless or not) come from the config
 const RULES = { ...GAME_MODES, custom: CUSTOM }
-const TABS = Object.keys(RULES).map((mode) => ({ id: mode, label: mode }))
 
 export default function Stats() {
+    const { lang, t } = useLanguage()
     const [mode, setMode] = useState('classic')
+    const tabs = Object.keys(RULES).map((id) => ({ id, label: t(`modes.${id}`) }))
 
     // numbers computed from the games saved in this browser
     const { maxTries, endless } = RULES[mode]
-    const stats = computeStats(getScores(), mode, maxTries, endless)
+    const stats = computeStats(getScores(lang), mode, maxTries, endless) // only the games of the current language
     const most = Math.max(1, ...stats.distribution) // the longest bar
 
     // the big numbers at the top
     const cards = [
-        { label: 'Games played', value: stats.played, ink: 'bg-sun' },
-        { label: 'Victories', value: `${stats.winRate}%`, note: `${stats.wins} / ${stats.played}`, ink: 'bg-pink' },
-        { label: 'Win streak', value: stats.streak, note: 'in a row, right now', ink: 'bg-cobalt text-paper' },
-        { label: 'Best streak', value: stats.bestStreak, note: 'in a row, ever', ink: 'bg-ink text-paper' },
-        { label: 'Total points', value: stats.totalPoints, ink: 'bg-card col-span-2' },
+        { label: t('stats.played'), value: stats.played, ink: 'bg-sun' },
+        { label: t('stats.victories'), value: `${stats.winRate}%`, note: `${stats.wins} / ${stats.played}`, ink: 'bg-pink' },
+        { label: t('stats.streak'), value: stats.streak, note: t('stats.streakNote'), ink: 'bg-cobalt text-paper' },
+        { label: t('stats.bestStreak'), value: stats.bestStreak, note: t('stats.bestStreakNote'), ink: 'bg-ink text-paper' },
+        { label: t('stats.points'), value: stats.totalPoints, ink: 'bg-card col-span-2' },
     ]
 
     return (
         <section className="stats flex w-full max-w-2xl flex-col items-center gap-8">
-            <h2 className="page-title">Stats</h2>
-            <Tabs tabs={TABS} active={mode} onChange={setMode} />
-            <p className="text-sm font-bold uppercase">{mode} mode, on this device</p>
-            {stats.played === 0 && <p className="notice">No {mode} game yet, go play one !</p>}
+            <h2 className="page-title">{t('pages.stats')}</h2>
+            <Tabs tabs={tabs} active={mode} onChange={setMode} />
+            <p className="text-sm font-bold uppercase">{t('stats.mode', { mode: t(`modes.${mode}`) })}</p>
+            {stats.played === 0 && <p className="notice">{t('stats.empty', { mode: t(`modes.${mode}`) })}</p>}
             <ul className="grid w-full grid-cols-2 gap-5">
                 {cards.map((card, i) => (
                     <li
@@ -45,7 +47,7 @@ export default function Stats() {
             </ul>
 
             <div className="flex w-full flex-col gap-3 border-[3px] border-ink bg-card p-5 shadow-hard">
-                <h3 className="font-display text-2xl font-extrabold uppercase">Victories by number of tries</h3>
+                <h3 className="font-display text-2xl font-extrabold uppercase">{t('stats.distribution')}</h3>
                 <ol className="flex flex-col gap-2">
                     {stats.distribution.map((count, i) => (
                         <li key={i} className="flex items-center gap-3">
