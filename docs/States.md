@@ -73,4 +73,6 @@
 - [x] Toutes les valeurs de réglage (règles des modes, points, limites, adresses...) sont dans un fichier de configuration (`src/config.js` pour le site, `server/config.js` pour le serveur)
 - [x] Des statistiques pour chaque mode, avec des onglets
 - [x] Un README complet : règles, modes, score, installation, structure du projet, fonctionnement, API, tests, déploiement et limites connues
-- [ ] Une page 404 pour les adresses qui n'existent pas, avec un lien de retour au menu
+- [x] Une page 404 pour les adresses qui n'existent pas, avec un lien de retour au menu
+- [x] Le jeu est disponible en français et en anglais, avec un bouton pour changer de langue (uniquement sur les pages qui ne sont pas une partie) ; la langue est mémorisée
+- [x] Les scores des deux langues sont séparés (classements, mot du jour et tentative du jour, compteur des joueurs, statistiques), car leurs difficultés ne se comparent pas

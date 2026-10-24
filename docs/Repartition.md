@@ -10,3 +10,6 @@
 - Dossier server, server.js: Thomas
 - Dossier data (api.js et storage.js): Thomas
 - Apparence (tailwind): Claude Code
+- i18n:
+  - Logique : Thomas + Timothée
+  - Refactoring : Thomas + Timothée + Claude Code
