@@ -11,7 +11,7 @@ import duelsRouter from './routes/duels.js'
 
 export const seedFromSecret = (secret) => createHash('sha256').update(secret).digest().readInt32LE(0)
 
-export function createApp({ db, bank, secret, now = Date.now, limits = RATE_LIMITS, log = false }) {
+export function createApp({ db, bank, secret, now = Date.now, rng = Math.random, limits = RATE_LIMITS, log = false }) {
     const app = express()
     app.set('trust proxy', TRUST_PROXY)
     app.disable('x-powered-by')
@@ -41,7 +41,7 @@ export function createApp({ db, bank, secret, now = Date.now, limits = RATE_LIMI
     const auth = createAuth(db)
     const store = createRunStore(db)
     const seed = seedFromSecret(secret)
-    const deps = { db, store, bank, seed, auth, limiters, now }
+    const deps = { db, store, bank, seed, rng, auth, limiters, now }
 
     app.use('/api/players', playersRouter(deps))
     app.use('/api/runs', runsRouter(deps))

@@ -10,7 +10,7 @@ export function respond(res, id, run, time = Date.now()) {
     res.json({ runId: id, serverNow: time, ...runView(run) })
 }
 
-export default function runsRouter({ store, bank, seed, auth, limiters, now }) {
+export default function runsRouter({ store, bank, seed, rng, auth, limiters, now }) {
     const router = Router()
     const exclusive = createLocks()
 
@@ -50,7 +50,7 @@ export default function runsRouter({ store, bank, seed, auth, limiters, now }) {
             store.endActive(req.player.id, mode, lang, time)
         }
 
-        const run = await startRun({ mode, lang, getLists, seed, date: new Date(time), now: time })
+        const run = await startRun({ mode, lang, getLists, rng, seed, date: new Date(time), now: time })
         let id
         try {
             id = store.create(run, { playerId: req.player.id, day, now: time })
@@ -89,7 +89,7 @@ export default function runsRouter({ store, bank, seed, auth, limiters, now }) {
 
         const time = now()
         try {
-            await nextRound(run, { getLists: bank.listsFor(run.lang), seed, date: new Date(time), now: time })
+            await nextRound(run, { getLists: bank.listsFor(run.lang), rng, seed, date: new Date(time), now: time })
         } catch (error) {
             if (!(error instanceof GuessError)) throw error
             store.save(row.id, run, time, row.last_guess_ms)

@@ -17,7 +17,7 @@ function compare(a, b) {
     return a.tries - b.tries || duration(a) - duration(b)
 }
 
-export default function duelsRouter({ db, store, bank, auth, limiters, now }) {
+export default function duelsRouter({ db, store, bank, rng, auth, limiters, now }) {
     const router = Router()
     const insert = db.prepare('INSERT INTO duels (code, lang, word, created_by, created_ms) VALUES (?, ?, ?, ?, ?)')
     const byCode = db.prepare('SELECT * FROM duels WHERE code = ?')
@@ -50,7 +50,7 @@ export default function duelsRouter({ db, store, bank, auth, limiters, now }) {
         if (!LANGUAGE_IDS.includes(lang)) return res.status(400).json({ error: 'badLanguage' })
 
         const lists = await bank.listsFor(lang)(GAME_MODES.duel.wordLength)
-        const word = randomWord(lists.pool)
+        const word = randomWord(lists.pool, rng)
         let code = newCode()
         while (byCode.get(code)) code = newCode()
 

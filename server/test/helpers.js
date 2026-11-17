@@ -27,7 +27,7 @@ export const HIGH_LIMITS = {
 export function setup({ limits = HIGH_LIMITS, start = Date.UTC(2026, 0, 7, 12), bank = fakeBank } = {}) {
     const clock = { time: start }
     const db = openDb(':memory:')
-    const app = createApp({ db, bank, secret: 'test-secret', now: () => clock.time, limits })
+    const app = createApp({ db, bank, secret: 'test-secret', now: () => clock.time, rng: () => 0, limits })
     const api = request(app)
 
     async function register(username) {

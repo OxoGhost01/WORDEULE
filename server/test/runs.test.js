@@ -77,9 +77,9 @@ describe('runs', () => {
             last = await guess(user, run, word)
             if (last.body.status !== 'playing') break
         }
-        expect(['won', 'lost']).toContain(last.body.status)
-        expect(last.body.revealed.answers).toHaveLength(1)
-        if (last.body.status === 'won') expect(last.body.score).toBeGreaterThan(0)
+        expect(last.body.status).toBe('won')
+        expect(last.body.revealed.answers).toEqual(['ABIDE'])
+        expect(last.body.score).toBe(200)
         tick(1000)
         expect((await guess(user, run, 'CRANE')).status).toBe(409)
     })
@@ -99,18 +99,14 @@ describe('runs', () => {
         const run = await start(user, 'classic')
         expect((await user.post(`/api/runs/${run.runId}/next`, {})).status).toBe(409)
 
-        let won = false
-        for (const word of ['CRANE', 'SLATE', 'HOUSE', 'MOUSE', 'ABIDE', 'SPEED']) {
+        for (const word of ['CRANE', 'SLATE', 'HOUSE', 'MOUSE', 'ABIDE']) {
             tick(1000)
-            const res = await guess(user, run, word)
-            if (res.body.status === 'won') won = true
+            await guess(user, run, word)
         }
-        if (won) {
-            const next = await user.post(`/api/runs/${run.runId}/next`, {})
-            expect(next.status).toBe(200)
-            expect(next.body.rows).toEqual([])
-            expect(next.body.score).toBeGreaterThan(0)
-        }
+        const next = await user.post(`/api/runs/${run.runId}/next`, {})
+        expect(next.status).toBe(200)
+        expect(next.body.rows).toEqual([])
+        expect(next.body.score).toBe(200)
     })
 
     it('keeps one daily run per player and day, and resumes it', async () => {
