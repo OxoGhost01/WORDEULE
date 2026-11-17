@@ -8,7 +8,7 @@ export function createRunStore(db) {
         SET state = ?, status = ?, score = ?, words = ?, tries = ?, updated_ms = ?, last_guess_ms = ?
         WHERE id = ?`)
     const byId = db.prepare('SELECT * FROM runs WHERE id = ?')
-    const daily = db.prepare("SELECT * FROM runs WHERE player_id = ? AND mode = 'daily' AND lang = ? AND day = ?")
+    const daily = db.prepare("SELECT * FROM runs WHERE player_id = ? AND mode = 'daily' AND lang = ? AND day = ? AND state != '{}'")
     const endActive = db.prepare(`UPDATE runs SET status = 'over', updated_ms = ?
         WHERE player_id = ? AND mode = ? AND lang = ? AND status IN ('playing', 'won', 'lost')`)
 

@@ -68,6 +68,22 @@ describe('leaderboard', () => {
 })
 
 describe('legacy scores', () => {
+    it("lets a player start today's daily run even if the old version already recorded one", async () => {
+        const { db, register, as, clock } = setup()
+        const dir = mkdtempSync(join(tmpdir(), 'wordeule-'))
+        const file = join(dir, 'scores.json')
+        const today = new Date(clock.time).toISOString().slice(0, 10)
+        writeFileSync(file, JSON.stringify({ daily: [{ username: 'Old', lang: 'en', score: 500, tries: 2, day: today, playedAt: new Date(clock.time).toISOString() }] }))
+        migrateLegacy(db, file)
+
+        const old = as(await register('Old'))
+        const first = await old.post('/api/runs', { mode: 'daily', lang: 'en' })
+        expect(first.status).toBe(200)
+        expect(first.body.rows).toEqual([])
+        const again = await old.post('/api/runs', { mode: 'daily', lang: 'en' })
+        expect(again.body.runId).toBe(first.body.runId)
+    })
+
     it('imports the old file once and gives the scores to the player who takes the name', async () => {
         const { api, db, register, as } = setup()
         const dir = mkdtempSync(join(tmpdir(), 'wordeule-'))

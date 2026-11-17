@@ -42,7 +42,8 @@ CREATE TABLE IF NOT EXISTS duels (
 `
 
 const UNIQUE_INDEXES = [
-    'CREATE UNIQUE INDEX IF NOT EXISTS runs_daily_once ON runs (player_id, mode, lang, day) WHERE day IS NOT NULL AND player_id IS NOT NULL',
+    'DROP INDEX IF EXISTS runs_daily_once',
+    "CREATE UNIQUE INDEX runs_daily_once ON runs (player_id, mode, lang, day) WHERE day IS NOT NULL AND player_id IS NOT NULL AND state != '{}'",
     'CREATE UNIQUE INDEX IF NOT EXISTS runs_duel_once ON runs (player_id, duel_code) WHERE duel_code IS NOT NULL',
 ]
 
