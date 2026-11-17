@@ -9,8 +9,8 @@ export const LIMITS = {
 }
 
 export const RATE_LIMITS = {
-    read: { windowMs: 60_000, limit: 120 },
-    play: { windowMs: 60_000, limit: 90 },
-    start: { windowMs: 60_000, limit: 30 },
-    register: { windowMs: 3_600_000, limit: 10 },
+    read: { windowMs: 60_000, limit: 600 },
+    play: { windowMs: 60_000, limit: 600 },
+    start: { windowMs: 60_000, limit: 120 },
+    register: { windowMs: 3_600_000, limit: 40 },
 }

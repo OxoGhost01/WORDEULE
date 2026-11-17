@@ -4,14 +4,17 @@ import { startRun, runView, expireIfLate } from '../../shared/run.js'
 import { randomWord } from '../../shared/words.js'
 import { DUEL, GAME_MODES, LANGUAGE_IDS } from '../../shared/rules.js'
 import { respond } from './runs.js'
+import { handle } from '../lock.js'
 
 const DAY_MS = 86_400_000
+
+const duration = (row) => row.updated_ms - (JSON.parse(row.state).firstGuessAt ?? row.started_ms)
 
 const finished = (row) => row.status === 'won' || row.status === 'lost'
 
 function compare(a, b) {
     if ((a.status === 'won') !== (b.status === 'won')) return a.status === 'won' ? -1 : 1
-    return a.tries - b.tries || (a.updated_ms - a.started_ms) - (b.updated_ms - b.started_ms)
+    return a.tries - b.tries || duration(a) - duration(b)
 }
 
 export default function duelsRouter({ db, store, bank, auth, limiters, now }) {
@@ -42,7 +45,7 @@ export default function duelsRouter({ db, store, bank, auth, limiters, now }) {
         return { id, run }
     }
 
-    router.post('/', auth.required, limiters.start, async (req, res) => {
+    router.post('/', auth.required, limiters.start, handle(async (req, res) => {
         const { lang } = req.body
         if (!LANGUAGE_IDS.includes(lang)) return res.status(400).json({ error: 'badLanguage' })
 
@@ -55,9 +58,9 @@ export default function duelsRouter({ db, store, bank, auth, limiters, now }) {
         const duel = byCode.get(code)
         const { id, run } = await createRunFor(duel, req.player.id)
         res.status(201).json({ code, runId: id, serverNow: now(), ...runView(run) })
-    })
+    }))
 
-    router.post('/:code/join', auth.required, limiters.start, async (req, res) => {
+    router.post('/:code/join', auth.required, limiters.start, handle(async (req, res) => {
         const duel = liveDuel(req, res)
         if (!duel) return
 
@@ -66,9 +69,15 @@ export default function duelsRouter({ db, store, bank, auth, limiters, now }) {
         if (mine) return respond(res, mine.id, store.load(mine), now())
         if (runs.length >= 2) return res.status(403).json({ error: 'full' })
 
-        const { id, run } = await createRunFor(duel, req.player.id)
-        respond(res, id, run, now())
-    })
+        try {
+            const { id, run } = await createRunFor(duel, req.player.id)
+            respond(res, id, run, now())
+        } catch (error) {
+            const again = store.forDuel(duel.code).find((row) => row.player_id === req.player.id)
+            if (!again || !/UNIQUE/.test(error.message)) throw error
+            respond(res, again.id, store.load(again), now())
+        }
+    }))
 
     router.get('/:code', auth.required, limiters.read, (req, res) => {
         const duel = liveDuel(req, res)
@@ -88,7 +97,7 @@ export default function duelsRouter({ db, store, bank, auth, limiters, now }) {
         const players = runs.map((row) => {
             const base = { username: usernames.get(row.player_id), me: row.player_id === req.player.id, finished: finished(row) }
             if (!(seeAll || base.me) || !base.finished) return base
-            return { ...base, outcome: row.status, tries: row.tries, ms: row.updated_ms - row.started_ms }
+            return { ...base, outcome: row.status, tries: row.tries, ms: duration(row) }
         })
 
         let winner = null

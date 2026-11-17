@@ -41,11 +41,23 @@ CREATE TABLE IF NOT EXISTS duels (
 );
 `
 
+const UNIQUE_INDEXES = [
+    'CREATE UNIQUE INDEX IF NOT EXISTS runs_daily_once ON runs (player_id, mode, lang, day) WHERE day IS NOT NULL AND player_id IS NOT NULL',
+    'CREATE UNIQUE INDEX IF NOT EXISTS runs_duel_once ON runs (player_id, duel_code) WHERE duel_code IS NOT NULL',
+]
+
 export function openDb(file) {
     if (file !== ':memory:') mkdirSync(dirname(file), { recursive: true })
     const db = new DatabaseSync(file)
     db.exec('PRAGMA journal_mode = WAL')
     db.exec('PRAGMA foreign_keys = ON')
     db.exec(SCHEMA)
+    for (const statement of UNIQUE_INDEXES) {
+        try {
+            db.exec(statement)
+        } catch (error) {
+            console.warn(`Could not create a unique index: ${error.message}`)
+        }
+    }
     return db
 }

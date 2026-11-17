@@ -64,6 +64,19 @@ describe('duels', () => {
         expect(JSON.stringify(done)).not.toMatch(/word/i)
     })
 
+    it('measures the time from the first guess, not from the moment the duel was created', async () => {
+        const { register, as, tick } = setup()
+        const alice = as(await register('Alice'))
+        const bob = as(await register('Bob'))
+        const created = (await alice.post('/api/duels', { lang: 'en' })).body
+        const joined = (await bob.post(`/api/duels/${created.code}/join`, {})).body
+        tick(10 * 60 * 1000)
+        await playOut(alice, created.runId, tick)
+        await playOut(bob, joined.runId, tick)
+        const done = (await bob.get(`/api/duels/${created.code}`)).body
+        expect(done.players.every((player) => player.ms < 60_000)).toBe(true)
+    })
+
     it('keeps outsiders out', async () => {
         const { register, as } = setup()
         const alice = as(await register('Alice'))

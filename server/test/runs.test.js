@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { setup } from './helpers.js'
+import { fakeBank, setup } from './helpers.js'
+
+const slowBank = {
+    listsFor: (lang) => async (length) => {
+        await new Promise((resolve) => setTimeout(resolve, 15))
+        return fakeBank.listsFor(lang)(length)
+    },
+}
 
 async function start(as, mode, lang = 'en') {
     const res = await as.post('/api/runs', { mode, lang })
@@ -152,6 +159,43 @@ describe('runs', () => {
         expect(codes.every((code) => ['lockedLetters', 'mustUse'].includes(code))).toBe(true)
     })
 
+    it('does not let parallel guesses probe the answer for free', async () => {
+        const { register, as, tick } = setup({ bank: slowBank })
+        const user = as(await register('Alice'))
+        const run = await start(user, 'classic')
+        tick(1000)
+        const words = ['CRANE', 'SLATE', 'HOUSE', 'MOUSE', 'ABIDE', 'SPEED', 'BUMPY', 'TRAIN']
+        const replies = await Promise.all(words.map((word) => guess(user, run, word)))
+        expect(replies.filter((reply) => reply.status === 200)).toHaveLength(1)
+        expect(replies.filter((reply) => reply.status === 429)).toHaveLength(words.length - 1)
+        tick(1000)
+        const next = await guess(user, run, 'SLATE')
+        expect(next.body.rows).toHaveLength(2)
+    })
+
+    it('gives a single daily run to parallel starts', async () => {
+        const { register, as } = setup({ bank: slowBank })
+        const user = as(await register('Alice'))
+        const replies = await Promise.all(Array.from({ length: 5 }, () => user.post('/api/runs', { mode: 'daily', lang: 'en' })))
+        expect(replies.every((reply) => reply.status === 200)).toBe(true)
+        expect(new Set(replies.map((reply) => reply.body.runId)).size).toBe(1)
+    })
+
+    it('starts the blitz clock once the words are ready', async () => {
+        const { register, as, clock } = setup()
+        const user = as(await register('Alice'))
+        const run = await start(user, 'blitz')
+        expect(run.deadline).toBe(clock.time + 90_000)
+    })
+
+    it('shows the target word in reverse mode only', async () => {
+        const { register, as } = setup()
+        const user = as(await register('Alice'))
+        const reverse = await start(user, 'reverse')
+        expect(reverse.target).toHaveLength(5)
+        expect((await start(user, 'classic')).target).toBeNull()
+    })
+
     it('stops a blitz run when the clock is out', async () => {
         const { register, as, tick } = setup()
         const user = as(await register('Alice'))
@@ -170,5 +214,16 @@ describe('runs', () => {
         const reverse = await start(user, 'reverse')
         expect(reverse.pattern).toHaveLength(5)
         expect(reverse.maxTries).toBe(3)
+    })
+})
+
+describe('failures', () => {
+    it('answers with a server error instead of crashing when the word lists are missing', async () => {
+        const broken = { listsFor: () => async () => { throw new Error('no lists') } }
+        const { register, as } = setup({ bank: broken })
+        const user = as(await register('Alice'))
+        const res = await user.post('/api/runs', { mode: 'classic', lang: 'en' })
+        expect(res.status).toBe(500)
+        expect(res.body).toEqual({ error: 'server' })
     })
 })

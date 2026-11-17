@@ -52,10 +52,10 @@ async function createRound(run, { getLists, rng, seed, date, answer }) {
     return state
 }
 
-export async function startRun({ mode, lang, params, getLists, rng = Math.random, seed = 0, date = new Date(), answer, now = Date.now() }) {
+export async function startRun({ mode, lang, params, getLists, rng = Math.random, seed = 0, date = new Date(), answer, now }) {
     const run = { mode, lang, params: params ?? null, status: 'playing', score: 0, words: 0, tries: 0, number: 1, deadline: null, state: null }
-    if (mode === 'blitz') run.deadline = now + BLITZ.startSeconds * 1000
     run.state = await createRound(run, { getLists, rng, seed, date, answer })
+    if (mode === 'blitz') run.deadline = (now ?? Date.now()) + BLITZ.startSeconds * 1000
     return run
 }
 
@@ -129,6 +129,7 @@ export function runView(run) {
         grids: state.grids,
         rows: state.rows,
         pattern: state.pattern ?? null,
+        target: run.mode === 'reverse' ? state.display[state.answers[0]] : null,
         revealed: run.status === 'playing' ? null : { answers: state.answers, display: state.display },
     }
 }

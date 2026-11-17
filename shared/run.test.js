@@ -127,8 +127,9 @@ describe('blitz run', () => {
 })
 
 describe('reverse run', () => {
-    it('shows a pattern and wins with any word that gives it', async () => {
+    it('shows the target word with a pattern, and wins with another word that gives it', async () => {
         const run = await newRun('reverse')
+        expect(runView(run).target).toBe(run.state.answers[0])
         const { pattern, answers } = run.state
         expect(pattern.filter((s) => s !== 'absent').length).toBeGreaterThanOrEqual(2)
         expect(pattern.every((s) => s === 'correct')).toBe(false)
@@ -144,6 +145,21 @@ describe('reverse run', () => {
         const wrong = WORDS.find((w) => JSON.stringify(runPattern(w, run.state.answers[0])) !== JSON.stringify(run.state.pattern))
         for (let i = 0; i < 3; i++) await submitGuess(run, wrong, ctx)
         expect(run.status).toBe('lost')
+    })
+})
+
+describe('blitz clock', () => {
+    it('starts after the word lists are loaded', async () => {
+        let loaded = false
+        const slow = async (length) => {
+            await new Promise((resolve) => setTimeout(resolve, 20))
+            loaded = true
+            return getLists(length)
+        }
+        const before = Date.now()
+        const run = await startRun({ mode: 'blitz', lang: 'en', getLists: slow, rng: rngFrom([0.05]) })
+        expect(loaded).toBe(true)
+        expect(run.deadline).toBeGreaterThanOrEqual(before + 20 + 90_000)
     })
 })
 
