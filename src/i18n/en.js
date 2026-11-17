@@ -90,6 +90,8 @@ export default {
     'leaderboard.empty': 'Nobody here yet, be the first !',
     'leaderboard.none': 'No completed games yet.',
     'leaderboard.tries': '{count} tries',
+    'leaderboard.word': '{count} word',
+    'leaderboard.words': '{count} words',
     'outcome.won': 'won',
     'outcome.lost': 'lost',
 

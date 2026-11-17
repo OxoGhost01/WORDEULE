@@ -90,6 +90,8 @@ export default {
     'leaderboard.empty': "Personne ici pour l'instant, soyez le premier !",
     'leaderboard.none': 'Aucune partie terminée pour le moment.',
     'leaderboard.tries': '{count} essais',
+    'leaderboard.word': '{count} mot',
+    'leaderboard.words': '{count} mots',
     'outcome.won': 'gagné',
     'outcome.lost': 'perdu',
 

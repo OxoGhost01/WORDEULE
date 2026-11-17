@@ -15,6 +15,7 @@ export const DEFAULT_LANGUAGE = 'en'
 export const LIMITS = {
     maxScore: 100000,
     maxTries: 20, // tries used in a game
+    maxWords: 1000, // words found in a run
     maxUsername: 24,
     topPlayers: 100,
 }

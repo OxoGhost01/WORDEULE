@@ -5,7 +5,7 @@ import { fixedLetters, requiredCounts, missingLetters, mergeRow } from './locked
 
 // Rules and typing of a game, working on the state of Home (the `game` object).
 // Returns the status (idle, playing, won, lost), onKey for both keyboards, and what the grid needs to display.
-export default function useGame({ mode, answers, words, guesses, setGuesses, guess, setGuess, setScore, maxTries }) {
+export default function useGame({ mode, answers, words, guesses, setGuesses, guess, setGuess, setScore, setWins, maxTries }) {
     const validWords = useMemo(() => new Set(words), [words]) // a Set to check a word quickly
     const wordLength = answers[0]?.length
     // won when every grid's word has been found
@@ -48,6 +48,7 @@ export default function useGame({ mode, answers, words, guesses, setGuesses, gue
             clearText()
             // all words found: points depend on the number of tries and on the difficulty of the mode
             if (answers.every((a) => next.includes(a))) {
+                setWins((w) => w + 1)
                 setScore((s) => s + roundScore(next.length, maxTries, scoreMultiplier(mode, wordLength, answers.length)))
             }
         } else if (/^[A-Z]$/.test(normalize(key)) && key.length === 1 && guess.length < typedLength) {
@@ -55,7 +56,7 @@ export default function useGame({ mode, answers, words, guesses, setGuesses, gue
             clearText()
             setGuess(guess + normalize(key))
         }
-    }, [status, mode, wordLength, answers, typedLength, locked, row, missingRequired, guesses, guess, maxTries, validWords, setGuesses, setGuess, setScore])
+    }, [status, mode, wordLength, answers, typedLength, locked, row, missingRequired, guesses, guess, maxTries, validWords, setGuesses, setGuess, setScore, setWins])
 
     // real keyboard: every key goes to onKey (the virtual keyboard calls it too)
     useEffect(() => {

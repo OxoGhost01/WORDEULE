@@ -12,7 +12,7 @@ import useLanguage from '../i18n/useLanguage.js'
 // saveResult false: the finished game is only displayed (daily game restored after a refresh), not saved again.
 export default function Game({ game, onNext, onRestart, saveResult = true }) {
     const { t } = useLanguage()
-    const { mode, lang, answers, display, guesses, score, maxTries } = game // lang: language of this game
+    const { mode, lang, answers, display, guesses, score, wins, maxTries } = game // lang: language of this game
     const { status, onKey, row, fixed, required, feedback } = useGame(game)
     const savedResult = useRef(false)
 

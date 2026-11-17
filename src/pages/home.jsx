@@ -26,6 +26,7 @@ function Home() {
   const [mode, setMode] = useState("") // Current gamemode: daily, classic, custom
   const [guess, setGuess] = useState("") // Word being typed by the player
   const [score, setScore] = useState(0) // Score
+  const [wins, setWins] = useState(0) // Words found in the current run (endless modes keep counting until a loss)
   const [answers, setAnswers] = useState([]) // Words to guess (one grid each), without accents
   const [display, setDisplay] = useState({}) // How the words to guess are written, with accents: { ETE: 'ÉTÉ' }
   const [gameLang, setGameLang] = useState(null) // Language of the current game
@@ -44,7 +45,10 @@ function Home() {
     setMaxTries(newMaxTries)
     setGuesses([])
     setGuess("")
-    if (!keepScore) setScore(0)
+    if (!keepScore) {
+      setScore(0)
+      setWins(0)
+    }
   }, [lang])
 
   // no username yet: show the welcome page instead of the game
@@ -53,7 +57,7 @@ function Home() {
   }
 
   // everything a mode needs to run a game, passed down as one prop
-  const game = { mode, lang: gameLang, answers, display, words: mots, guesses, setGuesses, guess, setGuess, score, setScore, maxTries, start }
+  const game = { mode, lang: gameLang, answers, display, words: mots, guesses, setGuesses, guess, setGuess, score, setScore, wins, setWins, maxTries, start }
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-8">

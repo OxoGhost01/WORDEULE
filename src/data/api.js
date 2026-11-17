@@ -2,18 +2,18 @@
 
 import { API_URL, LEADERBOARD_MODES } from '../config.js'
 
-// Sends a score with the number of tries of the word; the server only keeps the best of each
+// Sends a score with the number of tries of the last word and the number of words found to make it; the server only keeps the best of each
 // player, in each language. A failure is not a problem: the game goes on.
-export function sendScore({ username, mode, lang, score, tries }) {
+export function sendScore({ username, mode, lang, score, tries, words }) {
     if (!LEADERBOARD_MODES.includes(mode) || score <= 0) return
     fetch(`${API_URL}/scores`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, mode, lang, score, tries }),
+        body: JSON.stringify({ username, mode, lang, score, tries, words }),
     }).catch(() => {})
 }
 
-// The best players of a mode in a language: [{ username, score, tries, playedAt }, ...]
+// The best players of a mode in a language: [{ username, score, tries, words, playedAt }, ...]
 // (for the daily mode: only the players of today's word)
 export async function fetchLeaderboard(lang, mode) {
     const response = await fetch(`${API_URL}/scores/${lang}/${mode}`)

@@ -58,19 +58,21 @@ app.post('/api/scores', (req, res) => {
     const { mode, score } = req.body
     const lang = req.body.lang ?? DEFAULT_LANGUAGE
     const username = String(req.body.username ?? '').trim()
-    const tries = req.body.tries ?? null // tries used on the word that gave the score
+    const tries = req.body.tries ?? null // tries used on the last word of the run
+    const words = req.body.words ?? null // words found in the run: the score is the total of all of them
 
     if (!LANGUAGES.includes(lang)) return res.status(400).json({ error: 'Unknown language' })
     if (!MODES.includes(mode)) return res.status(400).json({ error: 'Unknown mode' })
     if (!Number.isInteger(score) || score <= 0 || score > LIMITS.maxScore) return res.status(400).json({ error: 'Bad score' })
     if (tries !== null && (!Number.isInteger(tries) || tries < 1 || tries > LIMITS.maxTries)) return res.status(400).json({ error: 'Bad tries' })
+    if (words !== null && (!Number.isInteger(words) || words < 0 || words > LIMITS.maxWords)) return res.status(400).json({ error: 'Bad words' })
     if (username.length === 0 || username.length > LIMITS.maxUsername) return res.status(400).json({ error: 'Bad username' })
 
     const scores = loadScores()
     const players = scores[mode] ?? []
     const day = mode === 'daily' ? today() : undefined
     const player = players.find((p) => p.username === username && langOf(p) === lang && p.day === day)
-    const result = { username, lang, score, tries, day, playedAt: new Date().toISOString() }
+    const result = { username, lang, score, tries, words, day, playedAt: new Date().toISOString() }
 
     if (!player) {
         players.push(result)
