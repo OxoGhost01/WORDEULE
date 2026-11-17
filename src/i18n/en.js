@@ -44,6 +44,13 @@ export default {
     // game
     'game.notEnough': 'Not enough letters',
     'game.notInList': 'Not in the word list',
+    'game.lockedLetters': 'Keep the locked letters in place',
+    'game.timeUp': "Time's up",
+    'game.connection': 'Connection problem, try again',
+    'status.correct': 'correct',
+    'status.present': 'elsewhere',
+    'status.absent': 'absent',
+    'reverse.target': 'Find a word that gives this pattern',
     'game.mustUse': 'Must use',
     'game.won': 'Won in {tries} / {max}',
     'game.lostOne': 'Lost, the word was {words}',

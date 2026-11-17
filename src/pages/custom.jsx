@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import Game from '../components/game.jsx'
-import { loadWordLists, randomWords } from '../game/words.js'
+import { launchRun } from '../game/launch.js'
 import { getSettings, saveSettings } from '../data/storage.js'
 import { CUSTOM } from '../config.js'
 import useLanguage from '../i18n/useLanguage.js'
 
 export default function Custom({ game }) {
     const { lang, t } = useLanguage()
-    const { mode, answers, start } = game
+    const { mode, wordLength: gameLength, start } = game
     const navigate = useNavigate()
 
     // the length is part of the address of the game: /custom/7 is a game with 7 letters, /custom is the settings form
@@ -21,6 +21,15 @@ export default function Custom({ game }) {
     const [wordCount, setWordCount] = useState(() => getSettings().wordCount)
     const [failed, setFailed] = useState(false) // the words could not be loaded
 
+    async function next() {
+        try {
+            game.apply(await game.engine.next())
+            game.setGuess('')
+        } catch {
+            setFailed(true)
+        }
+    }
+
     // all the settings must be whole numbers in the allowed range
     const inRange = (n, min, max) => Number.isInteger(n) && n >= min && n <= max
     const valid = inRange(wordLength, CUSTOM.minLength, CUSTOM.maxLength)
@@ -28,13 +37,13 @@ export default function Custom({ game }) {
         && inRange(wordCount, CUSTOM.minGrids, CUSTOM.maxGrids)
 
     // a game with the length of the address, in the current language, is running
-    const gameLoaded = urlLength !== null && mode === 'custom' && game.lang === lang && answers[0]?.length === urlLength
+    const gameLoaded = urlLength !== null && mode === 'custom' && game.lang === lang && gameLength === urlLength
 
-    // start a game with the chosen settings (keepScore: a win goes on with the same score)
-    async function launch(keepScore = false) {
+    const paramsOf = (length) => ({ wordLength: length, maxTries, grids: wordCount, endless: true })
+
+    async function launch() {
         try {
-            const { words, pool, display } = await loadWordLists(wordLength, lang)
-            start({ mode: 'custom', words, display, answers: randomWords(pool, wordCount), maxTries, keepScore })
+            start(await launchRun({ mode: 'custom', lang, params: paramsOf(wordLength) }))
             saveSettings({ wordLength, maxTries, wordCount })
             setFailed(false)
             if (urlLength !== wordLength) navigate(`/custom/${wordLength}`)
@@ -43,14 +52,11 @@ export default function Custom({ game }) {
         }
     }
 
-    // opening the address of a game (a link, a refresh) starts it with the saved settings
     useEffect(() => {
         if (urlLength === null || gameLoaded) return
         let cancelled = false
-        loadWordLists(urlLength, lang)
-            .then(({ words, pool, display }) => {
-                if (!cancelled) start({ mode: 'custom', words, display, answers: randomWords(pool, wordCount), maxTries })
-            })
+        launchRun({ mode: 'custom', lang, params: { wordLength: urlLength, maxTries, grids: wordCount, endless: true } })
+            .then((result) => { if (!cancelled) start(result) })
             .catch(() => { if (!cancelled) setFailed(true) })
         return () => { cancelled = true }
     }, [urlLength, gameLoaded, lang, start, wordCount, maxTries])
@@ -79,7 +85,7 @@ export default function Custom({ game }) {
         {failed && <p className="notice">{t('errors.words')}</p>}
         {gameLoaded && (
             <>
-                <Game game={game} onNext={() => launch(true)} onRestart={() => launch()} />
+                <Game game={game} onNext={next} onRestart={launch} />
                 <button className="btn bg-card" onClick={() => navigate('/custom')}>{t('custom.change')}</button>
             </>
         )}

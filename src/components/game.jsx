@@ -1,45 +1,45 @@
 import { useEffect, useRef, useState } from 'react'
 import Grid from './grid.jsx'
+import Pattern from './pattern.jsx'
 import useGame from '../game/useGame.js'
 import Keyboard from './keyboard.jsx'
 import Wiki from '../components/wiki.jsx'
 import { saveScore, todayKey } from '../data/storage.js'
 import shareText from '../game/share.js'
 import { sendScore } from '../data/api.js'
+import { gridSolved } from '../../shared/evaluate.js'
 import useLanguage from '../i18n/useLanguage.js'
 
-// One round: grid + typing + end message. onNext (after a win) and onRestart (after a loss) are optional.
-// saveResult false: the finished game is only displayed (daily game restored after a refresh), not saved again.
-export default function Game({ game, onNext, onRestart, saveResult = true }) {
+export default function Game({ game, onNext, onRestart, saveResult = true, endless = true }) {
     const { t } = useLanguage()
-    const { mode, lang, answers, display, guesses, score, wins, maxTries } = game // lang: language of this game
-    const { status, onKey, row, fixed, required, feedback } = useGame(game)
+    const { mode, lang, rows, grids, wordLength, maxTries, status, score, words, revealed, pattern, ranked } = game
+    const { onKey, row, fixed, required, feedback, pending } = useGame(game)
     const savedResult = useRef(false)
 
-    // save the result once, when the game ends (the flag is reset when a new game starts)
     useEffect(() => {
         if (status === 'playing' || status === 'idle') {
             savedResult.current = false
         } else if (!savedResult.current) {
-            if (saveResult) sendScore(saveScore({ mode, lang, score, outcome: status, tries: guesses.length, words: wins }))
+            if (saveResult) {
+                const result = saveScore({ mode, lang, score, outcome: status, tries: rows.length, words, guesses: rows.map((r) => r.guess) })
+                if (!ranked) sendScore(result)
+            }
             savedResult.current = true
         }
-    }, [mode, lang, score, wins, status, saveResult, guesses.length, answers])
+    }, [mode, lang, score, words, status, saveResult, rows, ranked])
 
-    const over = status === 'won' || status === 'lost'
+    const over = status === 'won' || status === 'lost' || status === 'over'
 
-    // the words are compared without accents, but shown with their accents
-    const spelled = (word) => display[word] ?? word
-    const missed = answers.filter((a) => !guesses.includes(a)).map(spelled)
+    const spelled = (word) => revealed?.display[word] ?? word
+    const answers = revealed?.answers ?? []
+    const missed = answers.filter((_, grid) => !gridSolved(rows, grid)).map(spelled)
+    const solved = status === 'won'
 
-    // text to share (colors only, no letters); copiedText remembers which text was copied
     const [copiedText, setCopiedText] = useState('')
     const title = `${lang.toUpperCase()} ${t(`modes.${mode}`)}${mode === 'daily' ? ` ${todayKey()}` : ''}`
-    const text = over ? shareText(title, answers, guesses, maxTries) : ''
-    // on a phone (touch screen): the native share sheet. Elsewhere (computers) it is not good: Chrome on Windows
-    // would only copy the link. So the text and the link are copied.
+    const text = over ? shareText(title, rows, grids, maxTries, solved) : ''
     async function share() {
-        const message = `${text}\n${window.location.origin}` // the link is in the text, some apps ignore a separate link
+        const message = `${text}\n${window.location.origin}`
         const onPhone = navigator.share && window.matchMedia('(pointer: coarse)').matches
         if (onPhone) {
             try {
@@ -53,24 +53,33 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
             await navigator.clipboard.writeText(message)
             setCopiedText(text)
         } catch {
-            setCopiedText('') // clipboard not allowed
+            setCopiedText('')
         }
     }
 
-    // one grid fills the width, several grids share it; a single grid never gets taller than the screen
-    const gridWidth = answers.length === 1
-        ? `max(9rem, min(100%, 22rem, calc((100dvh - 26rem) * ${(answers[0]?.length ?? 5) / maxTries})))`
+    const gridWidth = grids === 1
+        ? `max(9rem, min(100%, 22rem, calc((100dvh - 26rem) * ${wordLength / maxTries})))`
         : '12.5rem'
 
-    // grids, then messages, keyboard, and the end of game block
+    const lastRow = rows[rows.length - 1]
+    const announcement = lastRow
+        ? `${lastRow.guess}: ${lastRow.results.map((statuses) => statuses.map((s, i) => `${lastRow.guess[i]} ${t(`status.${s}`)}`).join(', ')).join(' / ')}`
+        : ''
+
     return (
         <div className="flex w-full flex-col items-center gap-6">
+            <p className="sr-only" aria-live="polite">{announcement}</p>
+            {mode === 'reverse' && pattern && (
+                <div className="flex flex-col items-center gap-2">
+                    <p className="text-sm font-bold uppercase">{t('reverse.target')}</p>
+                    <Pattern pattern={pattern} />
+                </div>
+            )}
             <div className="flex w-full max-w-6xl flex-wrap justify-center gap-x-6 gap-y-6">
-                {answers.map((word) => (
-                    <Grid key={word} guesses={guesses} guess={row} word={word} maxTries={maxTries} width={gridWidth} fixed={fixed} shake={feedback} />
+                {Array.from({ length: grids }, (_, grid) => (
+                    <Grid key={`${game.number}-${grid}`} rows={rows} grid={grid} guess={row} wordLength={wordLength} maxTries={maxTries} width={gridWidth} fixed={fixed} shake={feedback} finished={over} />
                 ))}
             </div>
-            {/* refused word message, and the letters the locked mode asks to use */}
             <div className="flex min-h-9 flex-col items-center gap-2">
                 {feedback.text && <p className="notice">{t(feedback.text)}</p>}
                 {required.length > 0 && !over && (
@@ -82,15 +91,16 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
                     </p>
                 )}
             </div>
-            <Keyboard answers={answers} guesses={guesses} onKey={onKey} />
+            <Keyboard rows={rows} grids={grids} onKey={pending ? () => {} : onKey} />
             {over && (
                 <div className="flex flex-col items-center gap-4">
-                    {status === 'won' && <p className="stamp border-cobalt text-cobalt">{t('game.won', { tries: guesses.length, max: maxTries })}</p>}
-                    {status === 'lost' && <p className="stamp border-pink text-pink">{t(answers.length > 1 ? 'game.lostMany' : 'game.lostOne', { words: missed.join(', ') })}</p>}
+                    {status === 'won' && <p className="stamp border-cobalt text-cobalt">{t('game.won', { tries: rows.length, max: maxTries })}</p>}
+                    {status === 'lost' && <p className="stamp border-pink text-pink">{t(grids > 1 ? 'game.lostMany' : 'game.lostOne', { words: missed.join(', ') })}</p>}
+                    {status === 'over' && <p className="stamp border-pink text-pink">{t('game.timeUp')}</p>}
                     <p className="font-display text-2xl font-extrabold uppercase">{t('game.score', { score })}</p>
-                    {status === 'won' && onNext && <button className="btn" onClick={onNext}>{t('game.next')}</button>}
+                    {solved && endless && onNext && <button className="btn" onClick={onNext}>{t('game.next')}</button>}
                     <button className="btn bg-card" onClick={share}>{copiedText === text ? t('game.copied') : t('game.share')}</button>
-                    {status === 'lost' && onRestart && <button className="btn bg-pink" onClick={onRestart}>{t('game.newGame')}</button>}
+                    {(status === 'lost' || status === 'over') && onRestart && <button className="btn bg-pink" onClick={onRestart}>{t('game.newGame')}</button>}
                     <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
                         {answers.map((word) => <Wiki key={word} word={spelled(word)} />)}
                     </div>

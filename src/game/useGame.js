@@ -1,64 +1,61 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import roundScore, { scoreMultiplier } from './score.js'
-import { normalize } from './text.js'
-import { fixedLetters, requiredCounts, missingLetters, mergeRow } from './locked.js'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { normalize } from '../../shared/text.js'
+import { fixedLetters, requiredCounts, missingLetters, mergeRow } from '../../shared/locked.js'
 
-// Rules and typing of a game, working on the state of Home (the `game` object).
-// Returns the status (idle, playing, won, lost), onKey for both keyboards, and what the grid needs to display.
-export default function useGame({ mode, answers, words, guesses, setGuesses, guess, setGuess, setScore, setWins, maxTries }) {
-    const validWords = useMemo(() => new Set(words), [words]) // a Set to check a word quickly
-    const wordLength = answers[0]?.length
-    // won when every grid's word has been found
-    const won = answers.length > 0 && answers.every((a) => guesses.includes(a))
-    const status = answers.length === 0 ? 'idle' : won ? 'won' : guesses.length >= maxTries ? 'lost' : 'playing'
+const ERROR_TEXTS = {
+    notInList: 'game.notInList',
+    wrongLength: 'game.notEnough',
+    lockedLetters: 'game.lockedLetters',
+    timeUp: 'game.timeUp',
+    connection: 'game.connection',
+}
 
-    const locked = mode === 'locked' && answers.length > 0
-    const fixed = useMemo(() => (locked ? fixedLetters(guesses, answers[0]) : []), [locked, guesses, answers]) // locked mode: the letters already guessed
-    const requiredByLetter = useMemo(() => (locked ? requiredCounts(guesses, answers[0]) : {}), [locked, guesses, answers])
-    const typedLength = wordLength - fixed.filter(Boolean).length // letters the player types on this line
-    const row = locked ? mergeRow(fixed, guess, wordLength) : guess // the line where the player types
+export default function useGame({ mode, rows, wordLength, status, engine, apply, guess, setGuess }) {
+    const locked = mode === 'locked' && status !== 'idle'
+    const fixed = useMemo(() => (locked ? fixedLetters(rows, wordLength) : []), [locked, rows, wordLength])
+    const requiredByLetter = useMemo(() => (locked ? requiredCounts(rows) : {}), [locked, rows])
+    const typedLength = wordLength - fixed.filter(Boolean).length
+    const row = locked ? mergeRow(fixed, guess, wordLength) : guess
     const required = missingLetters(row.replace(/ /g, ''), requiredByLetter)
     const missingRequired = required.length > 0
 
-    const [feedback, setFeedback] = useState({ n: 0, row: -1, text: '', alert: false, pulse: 0 }) // n increases each time a word is refused (to shake the line); alert/pulse: the player tried to submit without the required letters (to flash them)
+    const [feedback, setFeedback] = useState({ n: 0, row: -1, text: '', alert: false, pulse: 0 })
+    const [pending, setPending] = useState(false)
+    const sending = useRef(false)
 
     const onKey = useCallback((key) => {
-        if (status !== 'playing') return
+        if (status !== 'playing' || sending.current) return
 
-        // refuse a word: shake the line and show a message
-        const refuse = (text) => setFeedback((f) => ({ n: f.n + 1, row: guesses.length, text }))
+        const refuse = (text) => setFeedback((f) => ({ n: f.n + 1, row: rows.length, text }))
         const clearText = () => setFeedback((f) => (f.text || f.alert ? { ...f, text: '', alert: false } : f))
 
         if (key === 'Backspace') {
             clearText()
             setGuess(guess.slice(0, -1))
         } else if (key === 'Enter') {
-            // the word must be complete, then a real word
             if (guess.length !== typedLength) return refuse('game.notEnough')
-            if (!validWords.has(row)) return refuse('game.notInList')
-            if (locked && missingRequired) { 
-                // logic specific to the locked mode
-                // no message: the "must use" letters flash instead
+            if (locked && missingRequired) {
                 return setFeedback((f) => ({ ...f, alert: true, pulse: f.pulse + 1 }))
             }
-            // accepted: it is played on every grid
-            const next = [...guesses, row]
-            setGuesses(next)
-            setGuess('')
-            clearText()
-            // all words found: points depend on the number of tries and on the difficulty of the mode
-            if (answers.every((a) => next.includes(a))) {
-                setWins((w) => w + 1)
-                setScore((s) => s + roundScore(next.length, maxTries, scoreMultiplier(mode, wordLength, answers.length)))
-            }
+            sending.current = true
+            setPending(true)
+            engine.submit(row)
+                .then((view) => {
+                    apply(view)
+                    setGuess('')
+                    clearText()
+                })
+                .catch((error) => refuse(ERROR_TEXTS[error.code] ?? 'game.connection'))
+                .finally(() => {
+                    sending.current = false
+                    setPending(false)
+                })
         } else if (/^[A-Z]$/.test(normalize(key)) && key.length === 1 && guess.length < typedLength) {
-            // a letter, with or without accent: é counts as E
             clearText()
             setGuess(guess + normalize(key))
         }
-    }, [status, mode, wordLength, answers, typedLength, locked, row, missingRequired, guesses, guess, maxTries, validWords, setGuesses, setGuess, setScore, setWins])
+    }, [status, rows.length, typedLength, locked, row, missingRequired, guess, engine, apply, setGuess])
 
-    // real keyboard: every key goes to onKey (the virtual keyboard calls it too)
     useEffect(() => {
         function onKeyDown(e) {
             if (e.ctrlKey || e.metaKey || e.altKey) return
@@ -69,5 +66,5 @@ export default function useGame({ mode, answers, words, guesses, setGuesses, gue
         return () => window.removeEventListener('keydown', onKeyDown)
     }, [onKey])
 
-    return { status, onKey, row, fixed, required, feedback }
+    return { onKey, row, fixed, required, feedback, pending }
 }

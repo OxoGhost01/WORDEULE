@@ -1,4 +1,4 @@
-import { letterStatuses } from '../game/evaluate.js'
+import { letterStatuses } from '../../shared/evaluate.js'
 import { LANGUAGES } from '../config.js'
 import useLanguage from '../i18n/useLanguage.js'
 
@@ -8,10 +8,10 @@ const LABELS = { Enter: 'keyboard.enter', Backspace: 'keyboard.backspace' }
 // Virtual keyboard (QWERTY or AZERTY, depending on the language): shows the state of every letter and types like the real keyboard.
 // A key has one stripe per grid (one for a normal game, several for hardcore), each with the
 // class of the letter on that grid: correct, present, absent, or nothing if not tested yet.
-export default function Keyboard({ answers, guesses, onKey }) {
+export default function Keyboard({ rows, grids, onKey }) {
     const { lang, t } = useLanguage()
     // for each grid, the status of every letter already tried
-    const statuses = answers.map((word) => letterStatuses(guesses, word))
+    const statuses = Array.from({ length: grids }, (_, grid) => letterStatuses(rows, grid))
 
     return (
         <div className="flex w-full max-w-xl flex-col gap-1.5">

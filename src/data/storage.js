@@ -1,5 +1,5 @@
 // Everything saved in the browser (localStorage), in one entry: username, language, played games, daily progress, settings
-import { STORAGE_KEY, CUSTOM, DAILY, LANGUAGES, DEFAULT_LANGUAGE } from '../config.js'
+import { STORAGE_KEY, CUSTOM, LANGUAGES, DEFAULT_LANGUAGE } from '../config.js'
 
 // Nothing saved yet
 const emptyData = () => ({ username: '', language: null, scores: [], daily: {}, settings: {} })
@@ -111,29 +111,3 @@ export function saveSettings(settings) {
 	data.settings = settings
 	writeData(data)
 }
-
-// Same word for everybody during a whole day (UTC): the list is shuffled with a fixed seed,
-// then indexed by the number of days since 1970-01-01, so no word repeats before the list is used up
-export function getDailyWord(words, date = new Date()) {
-	const shuffledWords = [...words]
-	let seed = DAILY.seed
-
-	// small random generator: with the same seed it always gives the same numbers
-	function nextRandom() {
-		seed = (seed + 0x6d2b79f5) | 0 // (constant of the algorithm, not a setting)
-		let value = seed
-		value = Math.imul(value ^ (value >>> 15), value | 1)
-		value ^= value + Math.imul(value ^ (value >>> 7), value | 61)
-		return ((value ^ (value >>> 14)) >>> 0) / 4294967296
-	}
-
-	// shuffle the list (Fisher-Yates) the same way for everybody
-	for (let index = shuffledWords.length - 1; index > 0; index -= 1) {
-		const swapIndex = Math.floor(nextRandom() * (index + 1))
-		;[shuffledWords[index], shuffledWords[swapIndex]] = [shuffledWords[swapIndex], shuffledWords[index]]
-	}
-
-	const day = Math.floor(date.getTime() / 86400000)
-	return shuffledWords[day % shuffledWords.length]
-}
-

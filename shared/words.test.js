@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { pickAnswers, randomWords } from './words.js'
+import { buildLists, parseCommonWords, parseDictionary, pickAnswers, randomWords } from './words.js'
 
 describe('pickAnswers', () => {
     const dictionary = ['CRANE', 'THE', 'CAT', 'HOUSE', 'MOUSE']
@@ -32,5 +32,28 @@ describe('randomWords', () => {
         const picked = randomWords(['A', 'B', 'C', 'D', 'E'], 4)
         expect(picked).toHaveLength(4)
         expect(new Set(picked).size).toBe(4)
+    })
+})
+
+describe('parsers', () => {
+    it('keeps the plain words of a dictionary, without accents or duplicates', () => {
+        expect(parseDictionary(['été', 'ETE', "l'eau", 'chat'])).toEqual(['CHAT', 'ETE'])
+    })
+
+    it('reads the first token of each line, up to the limit', () => {
+        expect(parseCommonWords('the 100\nof 90\nand 80', 2)).toEqual(['the', 'of'])
+    })
+})
+
+describe('buildLists', () => {
+    it('gives the valid words and the pool of one length', () => {
+        const lists = buildLists(['CRANE', 'HOUSE', 'CAT'], ['house', 'cat'], 5)
+        expect(lists.words).toEqual(['CRANE', 'HOUSE'])
+        expect(lists.valid.has('CRANE')).toBe(true)
+        expect(lists.pool).toEqual(['HOUSE'])
+    })
+
+    it('fails when no word has this length', () => {
+        expect(() => buildLists(['CAT'], ['cat'], 5)).toThrow()
     })
 })

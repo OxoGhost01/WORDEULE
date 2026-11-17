@@ -15,49 +15,28 @@ import NotFound from './notfound.jsx'
 import Welcome from './welcome.jsx'
 import { getUsername, saveUsername } from '../data/storage.js'
 import { DEFAULT_MAX_TRIES } from '../config.js'
-import useLanguage from '../i18n/useLanguage.js'
 import { Route, Routes } from 'react-router'
 
-// Root of the app: owns the state of the current game, shared by all the modes (only one runs at a time)
+const IDLE = { mode: '', lang: null, rows: [], grids: 1, wordLength: 5, maxTries: DEFAULT_MAX_TRIES, status: 'idle', score: 0, words: 0, number: 0, deadline: null, pattern: null, revealed: null, engine: null, ranked: false, notice: null }
+
 function Home() {
-  const { lang } = useLanguage()
+  const [session, setSession] = useState(null)
+  const [guess, setGuess] = useState("")
+  const [username, setUsername] = useState(getUsername)
 
-  const [mots, setMots] = useState([]) // Word list of the current game: possible answers and valid guesses
-  const [mode, setMode] = useState("") // Current gamemode: daily, classic, custom
-  const [guess, setGuess] = useState("") // Word being typed by the player
-  const [score, setScore] = useState(0) // Score
-  const [wins, setWins] = useState(0) // Words found in the current run (endless modes keep counting until a loss)
-  const [answers, setAnswers] = useState([]) // Words to guess (one grid each), without accents
-  const [display, setDisplay] = useState({}) // How the words to guess are written, with accents: { ETE: 'ÉTÉ' }
-  const [gameLang, setGameLang] = useState(null) // Language of the current game
-  const [guesses, setGuesses] = useState([]) // Words already submitted by the player
-  const [maxTries, setMaxTries] = useState(DEFAULT_MAX_TRIES) // Number of tries allowed
-  const [username, setUsername] = useState(getUsername) // saved in the browser, asked by Welcome the first time
-
-  // Launches a game: only one mode runs at a time, so they all share the same state (singleton).
-  // words: the dictionary of the language (valid guesses), answers: the words to guess, display: their spelling with accents
-  const start = useCallback(({ mode: newMode, words, display: newDisplay, answers: newAnswers, maxTries: newMaxTries = DEFAULT_MAX_TRIES, keepScore = false }) => {
-    setMode(newMode)
-    setGameLang(lang)
-    setMots(words)
-    setDisplay(newDisplay)
-    setAnswers(newAnswers)
-    setMaxTries(newMaxTries)
-    setGuesses([])
+  const start = useCallback(({ view, engine, ranked, notice }) => {
+    setSession({ ...view, engine, ranked, notice })
     setGuess("")
-    if (!keepScore) {
-      setScore(0)
-      setWins(0)
-    }
-  }, [lang])
+  }, [])
+
+  const apply = useCallback((view) => setSession((s) => (s ? { ...s, ...view } : s)), [])
 
   // no username yet: show the welcome page instead of the game
   if (!username) {
     return <Welcome onSave={(name) => setUsername(saveUsername(name))} />
   }
 
-  // everything a mode needs to run a game, passed down as one prop
-  const game = { mode, lang: gameLang, answers, display, words: mots, guesses, setGuesses, guess, setGuess, score, setScore, wins, setWins, maxTries, start }
+  const game = { ...(session ?? IDLE), guess, setGuess, start, apply }
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-6xl flex-col px-4 sm:px-8">

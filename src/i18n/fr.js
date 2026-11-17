@@ -44,6 +44,13 @@ export default {
     // jeu
     'game.notEnough': 'Pas assez de lettres',
     'game.notInList': 'Pas dans la liste de mots',
+    'game.lockedLetters': 'Gardez les lettres verrouillées à leur place',
+    'game.timeUp': 'Temps écoulé',
+    'game.connection': 'Problème de connexion, réessayez',
+    'status.correct': 'bien placée',
+    'status.present': 'ailleurs',
+    'status.absent': 'absente',
+    'reverse.target': 'Trouvez un mot qui donne ce motif',
     'game.mustUse': 'À utiliser',
     'game.won': 'Gagné en {tries} / {max}',
     'game.lostOne': 'Perdu, le mot était {words}',
