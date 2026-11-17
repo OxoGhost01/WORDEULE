@@ -68,6 +68,12 @@ export default function Game({ game, onNext, onRestart, saveResult = true, endle
             {notice && <p className="notice">{t(notice)}</p>}
             {mode === 'reverse' && pattern && (
                 <div className="flex flex-col items-center gap-2">
+                    <p className="text-sm font-bold uppercase">{t('reverse.word')}</p>
+                    <div className="flex gap-1" style={{ width: '14rem' }}>
+                        {[...(game.target ?? '')].map((letter, i) => (
+                            <span key={i} className="tile" style={{ '--r': '0deg' }}><b>{letter}</b></span>
+                        ))}
+                    </div>
                     <p className="text-sm font-bold uppercase">{t('reverse.target')}</p>
                     <Pattern pattern={pattern} />
                 </div>

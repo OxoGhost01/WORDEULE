@@ -20,7 +20,7 @@ const CONTENT = {
     locked: ['howto.locked.rules', { example: LOCKED }, 'howto.locked.fixed', 'howto.locked.used'],
     survival: ['howto.survival.rules', 'howto.survival.grow', 'howto.survival.points'],
     blitz: ['howto.blitz.rules', 'howto.blitz.time', 'howto.blitz.points'],
-    reverse: ['howto.reverse.rules', { example: LOCKED }, 'howto.reverse.tries', 'howto.reverse.points'],
+    reverse: ['howto.reverse.rules', 'howto.reverse.tries', 'howto.reverse.points'],
     duel: ['howto.duel.rules', 'howto.duel.how', 'howto.duel.winner'],
 }
 

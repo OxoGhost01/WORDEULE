@@ -41,7 +41,7 @@ export default function Menu() {
                 </span>
                 <span className="flex flex-col items-end gap-2">
                     {current > 0 && (
-                        <span className="border-2 border-ink bg-pink px-2 py-0.5 text-xs font-bold uppercase">{t('menu.streak', { count: current })}</span>
+                        <span className="border-2 border-ink bg-pink px-2 py-0.5 text-xs font-bold uppercase">{t(current === 1 ? 'menu.streakOne' : 'menu.streak', { count: current })}</span>
                     )}
                     {playedToday && <Countdown compact />}
                 </span>

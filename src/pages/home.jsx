@@ -18,7 +18,7 @@ import { getUsername, saveUsername } from '../data/storage.js'
 import { DEFAULT_MAX_TRIES } from '../config.js'
 import { Route, Routes } from 'react-router'
 
-const IDLE = { clockOffset: 0, mode: '', lang: null, rows: [], grids: 1, wordLength: 5, maxTries: DEFAULT_MAX_TRIES, status: 'idle', score: 0, words: 0, number: 0, deadline: null, pattern: null, revealed: null, engine: null, ranked: false, notice: null }
+const IDLE = { clockOffset: 0, mode: '', lang: null, rows: [], grids: 1, wordLength: 5, maxTries: DEFAULT_MAX_TRIES, status: 'idle', score: 0, words: 0, number: 0, deadline: null, pattern: null, target: null, revealed: null, engine: null, ranked: false, notice: null }
 
 const clockOffsetOf = (view, fallback) => (view.serverNow ? view.serverNow - Date.now() : fallback)
 
