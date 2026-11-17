@@ -96,6 +96,14 @@ export default {
     'stats.bestStreak': 'Meilleure série',
     'stats.bestStreakNote': 'de suite, record',
     'stats.points': 'Total des points',
+    'stats.average': 'Essais en moyenne',
+    'stats.averageNote': 'sur les mots gagnés',
+    'stats.days': 'Jours de suite',
+    'stats.daysNote': 'mot du jour gagné',
+    'stats.bestDays': 'Meilleurs jours de suite',
+    'stats.bestDaysNote': 'de tous les temps',
+    'stats.calendar': '5 dernières semaines',
+    'stats.letters': 'Les lettres que vous jouez le plus',
     'stats.distribution': "Victoires selon le nombre d'essais",
 
     // classement

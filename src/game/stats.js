@@ -13,6 +13,8 @@ export default function computeStats(scores, mode, maxTries = DEFAULT_MAX_TRIES,
     let streak = 0
     let bestStreak = 0
     let totalPoints = 0
+    let triesSum = 0
+    let triesCount = 0
     const distribution = Array(maxTries).fill(0) // distribution[0]: wins in 1 try, [1]: in 2 tries...
 
     let previous = null
@@ -29,6 +31,10 @@ export default function computeStats(scores, mode, maxTries = DEFAULT_MAX_TRIES,
             // (not possible in custom, where the number of tries changes)
             const tries = game.tries ?? (mode === 'custom' ? undefined : maxTries + 1 - points / SCORE.pointsPerTry)
             if (distribution[tries - 1] !== undefined) distribution[tries - 1]++
+            if (Number.isFinite(tries)) {
+                triesSum += tries
+                triesCount++
+            }
         } else {
             streak = 0
         }
@@ -43,6 +49,7 @@ export default function computeStats(scores, mode, maxTries = DEFAULT_MAX_TRIES,
         bestStreak,
         totalPoints,
         distribution,
+        averageTries: triesCount ? Math.round((triesSum / triesCount) * 10) / 10 : null,
     }
 }
 
@@ -65,4 +72,33 @@ export function dailyStreaks(scores, today) {
 
     const current = previous && daysBetween(previous, today) <= 1 ? run : 0
     return { current, best, days }
+}
+
+export function letterCounts(scores, mode) {
+    const counts = {}
+    for (const result of scores) {
+        if (result.mode !== mode || !Array.isArray(result.guesses)) continue
+        for (const guess of result.guesses) {
+            for (const letter of guess) counts[letter] = (counts[letter] ?? 0) + 1
+        }
+    }
+    return counts
+}
+
+export function dailyCalendar(scores, today, weeks = 5) {
+    const outcomes = new Map()
+    for (const result of scores) {
+        if (result.mode !== 'daily') continue
+        const day = result.playedAt.slice(0, 10)
+        if (outcomes.get(day) !== 'won') outcomes.set(day, result.outcome)
+    }
+
+    const todayMs = Date.parse(today)
+    const sinceMonday = (new Date(todayMs).getUTCDay() + 6) % 7
+    const first = todayMs - (sinceMonday + (weeks - 1) * 7) * DAY_MS
+
+    return Array.from({ length: weeks * 7 }, (_, i) => {
+        const day = new Date(first + i * DAY_MS).toISOString().slice(0, 10)
+        return { day, outcome: outcomes.get(day) ?? null, future: day > today }
+    })
 }

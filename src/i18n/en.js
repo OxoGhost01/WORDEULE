@@ -96,6 +96,14 @@ export default {
     'stats.bestStreak': 'Best streak',
     'stats.bestStreakNote': 'in a row, ever',
     'stats.points': 'Total points',
+    'stats.average': 'Average tries',
+    'stats.averageNote': 'on won words',
+    'stats.days': 'Days in a row',
+    'stats.daysNote': 'daily word won',
+    'stats.bestDays': 'Best days in a row',
+    'stats.bestDaysNote': 'ever',
+    'stats.calendar': 'Last 5 weeks',
+    'stats.letters': 'Letters you play the most',
     'stats.distribution': 'Victories by number of tries',
 
     // leaderboard
