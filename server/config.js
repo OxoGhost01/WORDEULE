@@ -1,21 +1,16 @@
-// All the settings of the server in one place
-// (the site has its own in src/config.js: the lists of modes and of languages must be the same)
+export const PORT = Number(process.env.PORT ?? 3000)
+export const DATA_DIR = process.env.DATA_DIR ?? './data'
+export const PRODUCTION = process.env.NODE_ENV === 'production'
+export const TRUST_PROXY = Number(process.env.TRUST_PROXY ?? 2)
+export const DAILY_SECRET = process.env.DAILY_SECRET ?? ''
 
-export const PORT = 3000
-export const DATA_FILE = process.env.DATA_FILE ?? './data/scores.json' // the docker image sets it to /data/scores.json
-
-export const MODES = ['daily', 'classic', 'hardcore', 'locked'] // custom is not ranked: its rules change every game
-
-// The scores of two languages are never mixed: their difficulty can't be compared.
-// Results saved before there were two languages have no language, they were in the default one.
-export const LANGUAGES = ['en', 'fr']
-export const DEFAULT_LANGUAGE = 'en'
-
-// What a player is allowed to send, and how much is returned
 export const LIMITS = {
-    maxScore: 100000,
-    maxTries: 20, // tries used in a game
-    maxWords: 1000, // words found in a run
-    maxUsername: 24,
     topPlayers: 100,
+}
+
+export const RATE_LIMITS = {
+    read: { windowMs: 60_000, limit: 120 },
+    play: { windowMs: 60_000, limit: 90 },
+    start: { windowMs: 60_000, limit: 30 },
+    register: { windowMs: 3_600_000, limit: 10 },
 }
