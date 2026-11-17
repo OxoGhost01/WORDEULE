@@ -55,7 +55,7 @@ export default {
     'game.connection': 'Connection problem, try again',
     'game.tooFast': 'Slow down a little',
     'game.offline': "The server can't be reached: this game is not ranked.",
-    'game.nameTaken': 'Your username is already used by someone else: this game is not ranked. Change it in the settings.',
+    'game.nameTaken': "Your username can't be used for ranked games (already taken, or not allowed): this game is not ranked. Change it in the settings.",
     'status.correct': 'correct',
     'status.present': 'elsewhere',
     'status.absent': 'absent',

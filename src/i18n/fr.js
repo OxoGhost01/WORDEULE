@@ -55,7 +55,7 @@ export default {
     'game.connection': 'Problème de connexion, réessayez',
     'game.tooFast': 'Doucement, pas si vite',
     'game.offline': 'Le serveur est injoignable : cette partie ne sera pas classée.',
-    'game.nameTaken': 'Votre pseudo est déjà utilisé par quelqu\'un d\'autre : cette partie ne sera pas classée. Changez-le dans les réglages.',
+    'game.nameTaken': "Votre pseudo ne peut pas servir en partie classée (déjà pris, ou non autorisé) : cette partie ne sera pas classée. Changez-le dans les réglages.",
     'status.correct': 'bien placée',
     'status.present': 'ailleurs',
     'status.absent': 'absente',
