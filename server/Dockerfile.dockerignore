@@ -1,2 +1,7 @@
 node_modules
 data
+*.log
+.git
+dist
+src
+docs

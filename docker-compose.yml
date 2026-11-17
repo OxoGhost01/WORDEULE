@@ -11,7 +11,11 @@ services:
 
   # leaderboard server: only reachable from the site container (nginx forwards /api to it)
   api:
-    build: ./server
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      DAILY_SECRET: ${DAILY_SECRET:?set DAILY_SECRET in the .env file}
     container_name: wordeule-api
     restart: unless-stopped
     volumes:

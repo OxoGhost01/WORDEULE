@@ -31,3 +31,4 @@ deploy.sh
 server/data
 deploy/
 docker/
+.env
