@@ -21,10 +21,10 @@ export default function Game({ game, onNext, onRestart, saveResult = true }) {
         if (status === 'playing' || status === 'idle') {
             savedResult.current = false
         } else if (!savedResult.current) {
-            if (saveResult) sendScore(saveScore({ mode, lang, score, outcome: status, tries: guesses.length }))
+            if (saveResult) sendScore(saveScore({ mode, lang, score, outcome: status, tries: guesses.length, words: wins }))
             savedResult.current = true
         }
-    }, [mode, lang, score, status, saveResult, guesses.length, answers])
+    }, [mode, lang, score, wins, status, saveResult, guesses.length, answers])
 
     const over = status === 'won' || status === 'lost'
 
