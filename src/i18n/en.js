@@ -1,5 +1,7 @@
 // English texts. Fr.js has the same keys. {name} is replaced by a value, **text** is displayed in bold.
 export default {
+    'app.title': 'WORDEULE · Wordle in French and English, with challenges and leaderboards',
+
     // pages and modes (the names are also used as titles)
     'modes.daily': 'Daily',
     'modes.classic': 'Classic',

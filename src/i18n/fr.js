@@ -1,5 +1,7 @@
 // Textes français. Les clés sont les mêmes que dans en.js. {name} est remplacé par une valeur, **texte** s'affiche en gras.
 export default {
+    'app.title': 'WORDEULE · Wordle en français et en anglais, avec défis et classements',
+
     // pages et modes (les noms servent aussi de titres)
     'modes.daily': 'Mot du jour',
     'modes.classic': 'Classique',

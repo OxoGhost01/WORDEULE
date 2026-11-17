@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /duel/
+Disallow: /settings
+
+Sitemap: https://wordeule.oxoghost.dev/sitemap.xml

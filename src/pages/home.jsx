@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Header from '../components/header.jsx'
 import Footer from '../components/footer.jsx'
 import Menu from '../components/menu.jsx'
@@ -16,7 +16,9 @@ import NotFound from './notfound.jsx'
 import Welcome from './welcome.jsx'
 import { getUsername, saveUsername } from '../data/storage.js'
 import { DEFAULT_MAX_TRIES } from '../config.js'
-import { Route, Routes } from 'react-router'
+import { Route, Routes, useLocation } from 'react-router'
+import useLanguage from '../i18n/useLanguage.js'
+import { pageTitle } from '../i18n/pageTitle.js'
 
 const IDLE = { clockOffset: 0, mode: '', lang: null, rows: [], grids: 1, wordLength: 5, maxTries: DEFAULT_MAX_TRIES, status: 'idle', score: 0, words: 0, number: 0, deadline: null, pattern: null, target: null, revealed: null, engine: null, ranked: false, notice: null }
 
@@ -26,6 +28,12 @@ function Home() {
   const [session, setSession] = useState(null)
   const [guess, setGuess] = useState("")
   const [username, setUsername] = useState(getUsername)
+  const { pathname } = useLocation()
+  const { t } = useLanguage()
+
+  useEffect(() => {
+    document.title = pageTitle(pathname, t)
+  }, [pathname, t])
 
   const start = useCallback(({ view, engine, ranked, notice }) => {
     setSession({ ...view, engine, ranked, notice, clockOffset: clockOffsetOf(view, 0) })
