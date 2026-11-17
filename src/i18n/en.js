@@ -32,6 +32,8 @@ export default {
     'welcome.intro': "Welcome to a way better version of the famous game WORDLE. This is way better than anything you've ever seen until now. Play this with your friends, family, dog, or even benbi (at your own risk). Have fun with many different modes, and pick from any possible level of difficulty that you could wish for with the custom mode. But first...",
     'welcome.username': 'Choose a username',
     'welcome.continue': 'Continue',
+    'welcome.taken': 'This username is already taken',
+    'welcome.invalid': 'Use letters, digits, spaces, dots, dashes or underscores',
 
     // about
     'about.intro': 'WORDEULE is a small game made by 2 friends for a class project. The goal is not to make something professional or fancy, but just something fun, with a lot of possibilities.',
@@ -47,6 +49,9 @@ export default {
     'game.lockedLetters': 'Keep the locked letters in place',
     'game.timeUp': "Time's up",
     'game.connection': 'Connection problem, try again',
+    'game.tooFast': 'Slow down a little',
+    'game.offline': "The server can't be reached: this game is not ranked.",
+    'game.nameTaken': 'Your username is already used by someone else: this game is not ranked. Change it in the settings.',
     'status.correct': 'correct',
     'status.present': 'elsewhere',
     'status.absent': 'absent',
@@ -91,6 +96,9 @@ export default {
 
     // leaderboard
     'leaderboard.mine': 'On this device',
+    'leaderboard.period.all': 'All time',
+    'leaderboard.period.week': 'This week',
+    'leaderboard.period.today': 'Today',
     'leaderboard.today': 'Word of {date}',
     'leaderboard.loading': 'Loading...',
     'leaderboard.error': 'Could not load the leaderboard',

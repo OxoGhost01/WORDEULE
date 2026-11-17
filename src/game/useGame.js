@@ -8,6 +8,7 @@ const ERROR_TEXTS = {
     lockedLetters: 'game.lockedLetters',
     timeUp: 'game.timeUp',
     connection: 'game.connection',
+    tooFast: 'game.tooFast',
 }
 
 export default function useGame({ mode, rows, wordLength, status, engine, apply, guess, setGuess }) {

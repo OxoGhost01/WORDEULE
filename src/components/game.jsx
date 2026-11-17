@@ -6,13 +6,12 @@ import Keyboard from './keyboard.jsx'
 import Wiki from '../components/wiki.jsx'
 import { saveScore, todayKey } from '../data/storage.js'
 import shareText from '../game/share.js'
-import { sendScore } from '../data/api.js'
 import { gridSolved } from '../../shared/evaluate.js'
 import useLanguage from '../i18n/useLanguage.js'
 
 export default function Game({ game, onNext, onRestart, saveResult = true, endless = true }) {
     const { t } = useLanguage()
-    const { mode, lang, rows, grids, wordLength, maxTries, status, score, words, revealed, pattern, ranked } = game
+    const { mode, lang, rows, grids, wordLength, maxTries, status, score, words, revealed, pattern, notice } = game
     const { onKey, row, fixed, required, feedback, pending } = useGame(game)
     const savedResult = useRef(false)
 
@@ -20,13 +19,10 @@ export default function Game({ game, onNext, onRestart, saveResult = true, endle
         if (status === 'playing' || status === 'idle') {
             savedResult.current = false
         } else if (!savedResult.current) {
-            if (saveResult) {
-                const result = saveScore({ mode, lang, score, outcome: status, tries: rows.length, words, guesses: rows.map((r) => r.guess) })
-                if (!ranked) sendScore(result)
-            }
+            if (saveResult) saveScore({ mode, lang, score, outcome: status, tries: rows.length, words, guesses: rows.map((r) => r.guess) })
             savedResult.current = true
         }
-    }, [mode, lang, score, words, status, saveResult, rows, ranked])
+    }, [mode, lang, score, words, status, saveResult, rows])
 
     const over = status === 'won' || status === 'lost' || status === 'over'
 
@@ -69,6 +65,7 @@ export default function Game({ game, onNext, onRestart, saveResult = true, endle
     return (
         <div className="flex w-full flex-col items-center gap-6">
             <p className="sr-only" aria-live="polite">{announcement}</p>
+            {notice && <p className="notice">{t(notice)}</p>}
             {mode === 'reverse' && pattern && (
                 <div className="flex flex-col items-center gap-2">
                     <p className="text-sm font-bold uppercase">{t('reverse.target')}</p>

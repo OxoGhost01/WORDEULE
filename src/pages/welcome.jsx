@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { USERNAME_MAX_LENGTH } from '../config.js'
+import { registerPlayer } from '../data/api.js'
 import LanguageSwitch from '../components/languageswitch.jsx'
 import useLanguage from '../i18n/useLanguage.js'
 
@@ -7,11 +8,25 @@ import useLanguage from '../i18n/useLanguage.js'
 export default function Welcome({ onSave }) {
 	const { t } = useLanguage()
 	const [username, setUsername] = useState('')
+	const [error, setError] = useState('')
+	const [busy, setBusy] = useState(false)
 
-	function handleSubmit(event) {
+	async function handleSubmit(event) {
 		event.preventDefault()
 		const name = username.trim()
-		if (name) onSave(name)
+		if (!name) return
+		setBusy(true)
+		setError('')
+		try {
+			await registerPlayer(name)
+			onSave(name)
+		} catch (failure) {
+			if (failure.status === 409) setError('welcome.taken')
+			else if (failure.status === 400) setError('welcome.invalid')
+			else onSave(name)
+		} finally {
+			setBusy(false)
+		}
 	}
 
 	return (
@@ -30,7 +45,8 @@ export default function Welcome({ onSave }) {
 					onChange={(event) => setUsername(event.target.value)}
 					required
 				/>
-				<button className="btn" type="submit">{t('welcome.continue')}</button>
+				{error && <p className="notice">{t(error)}</p>}
+				<button className="btn" type="submit" disabled={busy}>{t('welcome.continue')}</button>
 			</form>
 		</main>
 	)

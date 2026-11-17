@@ -5,36 +5,40 @@ import { fetchLeaderboard } from '../data/api.js'
 import { LEADERBOARD_MODES } from '../config.js'
 import useLanguage from '../i18n/useLanguage.js'
 
+const PERIODS = ['all', 'week', 'today']
+
 export default function Leaderboard() {
     const { lang, t } = useLanguage()
     const [tab, setTab] = useState(LEADERBOARD_MODES[0])
-    const [boards, setBoards] = useState({}) // "language/mode" -> list of players, or 'error'
+    const [period, setPeriod] = useState('all')
+    const [boards, setBoards] = useState({})
 
-    // one tab per mode of the global leaderboard, plus the games played on this device
     const tabs = [
         ...LEADERBOARD_MODES.map((mode) => ({ id: mode, label: t(`modes.${mode}`) })),
         { id: 'mine', label: t('leaderboard.mine') },
     ]
+    const periodTabs = PERIODS.map((id) => ({ id, label: t(`leaderboard.period.${id}`) }))
 
-    // the leaderboards of two languages are never mixed
-    const board = boards[`${lang}/${tab}`]
+    const effectivePeriod = tab === 'daily' ? 'today' : period
+    const key = `${lang}/${tab}/${effectivePeriod}`
+    const board = boards[key]
 
-    // load the leaderboard of the open tab, in the current language, once
     useEffect(() => {
         if (tab === 'mine' || board) return
         let cancelled = false
-        fetchLeaderboard(lang, tab)
-            .then((players) => { if (!cancelled) setBoards((b) => ({ ...b, [`${lang}/${tab}`]: players })) })
-            .catch(() => { if (!cancelled) setBoards((b) => ({ ...b, [`${lang}/${tab}`]: 'error' })) })
+        fetchLeaderboard(lang, tab, effectivePeriod)
+            .then((data) => { if (!cancelled) setBoards((b) => ({ ...b, [key]: data })) })
+            .catch(() => { if (!cancelled) setBoards((b) => ({ ...b, [key]: 'error' })) })
         return () => { cancelled = true }
-    }, [lang, tab, board])
+    }, [lang, tab, effectivePeriod, key, board])
 
     return (
         <section className="leaderboard flex w-full max-w-2xl flex-col items-center gap-6">
             <h2 className="page-title">{t('pages.leaderboard')}</h2>
             <Tabs tabs={tabs} active={tab} onChange={setTab} />
             {tab === 'daily' && <p className="text-sm font-bold uppercase">{t('leaderboard.today', { date: todayKey() })}</p>}
-            {tab === 'mine' ? <LocalScores /> : <Board key={`${lang}/${tab}`} players={board} mode={tab} />}
+            {tab !== 'daily' && tab !== 'mine' && <Tabs tabs={periodTabs} active={period} onChange={setPeriod} />}
+            {tab === 'mine' ? <LocalScores /> : <Board key={key} board={board} mode={tab} />}
         </section>
     )
 }
@@ -47,30 +51,35 @@ function detail(t, mode, result) {
     return t(result.words === 1 ? 'leaderboard.word' : 'leaderboard.words', { count: result.words })
 }
 
-// The best players of a mode (players is undefined while loading, or 'error' if it failed)
-function Board({ players, mode }) {
+function Board({ board, mode }) {
     const { t } = useLanguage()
     const me = getUsername()
 
-    if (players === undefined) return <p className="notice">{t('leaderboard.loading')}</p>
-    if (players === 'error') return <p className="notice">{t('leaderboard.error')}</p>
-    if (players.length === 0) return <p className="notice">{t('leaderboard.empty')}</p>
+    if (board === undefined) return <p className="notice">{t('leaderboard.loading')}</p>
+    if (board === 'error') return <p className="notice">{t('leaderboard.error')}</p>
+    if (board.top.length === 0) return <p className="notice">{t('leaderboard.empty')}</p>
+
+    const row = (player, rank, extra = '') => (
+        <li
+            key={`${rank}-${player.username}`}
+            className={`flex items-center gap-3 border-[3px] border-ink p-3 ${player.username === me ? 'bg-sun' : 'bg-card'} ${extra}`}
+        >
+            <span className="w-10 font-display text-3xl font-extrabold">{rank}</span>
+            <span className="flex flex-1 flex-col">
+                <span className="font-bold">{player.username}</span>
+                <span className="text-xs">{detail(t, mode, player) ? `${detail(t, mode, player)} · ` : ''}{new Date(player.playedAt).toLocaleDateString()}</span>
+            </span>
+            <strong className="min-w-[4ch] text-right font-display text-3xl font-extrabold">{player.score}</strong>
+        </li>
+    )
+
+    const outside = board.me && board.me.rank > board.top.length
 
     return (
         <ol className="flex w-full flex-col gap-3">
-            {players.map((player, index) => (
-                <li
-                    key={player.username}
-                    className={`flex items-center gap-3 border-[3px] border-ink p-3 ${player.username === me ? 'bg-sun' : 'bg-card'}`}
-                >
-                    <span className="w-10 font-display text-3xl font-extrabold">{index + 1}</span>
-                    <span className="flex flex-1 flex-col">
-                        <span className="font-bold">{player.username}</span>
-                        <span className="text-xs">{detail(t, mode, player) ? `${detail(t, mode, player)} · ` : ''}{new Date(player.playedAt).toLocaleDateString()}</span>
-                    </span>
-                    <strong className="min-w-[4ch] text-right font-display text-3xl font-extrabold">{player.score}</strong>
-                </li>
-            ))}
+            {board.top.map((player, index) => row(player, index + 1))}
+            {outside && <li className="text-center font-display text-2xl font-extrabold" aria-hidden="true">...</li>}
+            {outside && row(board.me, board.me.rank, 'border-dashed')}
         </ol>
     )
 }

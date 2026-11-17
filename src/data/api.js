@@ -1,29 +1,70 @@
-// Global leaderboard: talks to the server in /server (through /api, see vite.config.js and docker/nginx.conf)
+import { API_URL } from '../config.js'
+import { getToken, getUsername, saveToken } from './storage.js'
 
-import { API_URL, LEADERBOARD_MODES } from '../config.js'
-
-// Sends a score with the number of tries of the last word and the number of words found to make it; the server only keeps the best of each
-// player, in each language. A failure is not a problem: the game goes on.
-export function sendScore({ username, mode, lang, score, tries, words }) {
-    if (!LEADERBOARD_MODES.includes(mode) || score <= 0) return
-    fetch(`${API_URL}/scores`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, mode, lang, score, tries, words }),
-    }).catch(() => {})
+export class ApiError extends Error {
+    constructor(status, code) {
+        super(code)
+        this.status = status
+        this.code = code
+    }
 }
 
-// The best players of a mode in a language: [{ username, score, tries, words, playedAt }, ...]
-// (for the daily mode: only the players of today's word)
-export async function fetchLeaderboard(lang, mode) {
-    const response = await fetch(`${API_URL}/scores/${lang}/${mode}`)
-    if (!response.ok) throw new Error('Could not load the leaderboard')
-    return response.json()
+async function raw(path, { method = 'GET', body, token } = {}) {
+    const headers = {}
+    if (body) headers['Content-Type'] = 'application/json'
+    if (token) headers.Authorization = `Bearer ${token}`
+
+    let response
+    try {
+        response = await fetch(`${API_URL}${path}`, { method, headers, body: body ? JSON.stringify(body) : undefined })
+    } catch {
+        throw new ApiError(0, 'connection')
+    }
+
+    const data = await response.json().catch(() => ({}))
+    if (!response.ok) throw new ApiError(response.status, data.error ?? 'server')
+    return data
 }
 
-// Number of players who found today's daily word in a language
+let registering = null
+
+export async function registerPlayer(username) {
+    const { token } = await raw('/players', { method: 'POST', body: { username } })
+    saveToken(token)
+    return token
+}
+
+async function ensureToken() {
+    const saved = getToken()
+    if (saved) return saved
+    registering ??= registerPlayer(getUsername()).finally(() => { registering = null })
+    return registering
+}
+
+async function authed(path, options) {
+    try {
+        return await raw(path, { ...options, token: await ensureToken() })
+    } catch (error) {
+        if (error.status !== 401) throw error
+        saveToken('')
+        return raw(path, { ...options, token: await ensureToken() })
+    }
+}
+
+export const renamePlayer = (username) => authed('/players/me', { method: 'PATCH', body: { username } })
+
+export const startRun = (mode, lang) => authed('/runs', { method: 'POST', body: { mode, lang } })
+export const sendGuess = (runId, guess) => authed(`/runs/${runId}/guess`, { method: 'POST', body: { guess } })
+export const nextRound = (runId) => authed(`/runs/${runId}/next`, { method: 'POST', body: {} })
+
+export function fetchLeaderboard(lang, mode, period = 'all') {
+    return raw(`/scores/${lang}/${mode}?period=${period}`, { token: getToken() })
+}
+
 export async function fetchDailyCount(lang) {
-    const response = await fetch(`${API_URL}/daily/count/${lang}`)
-    if (!response.ok) throw new Error('Could not load the counter')
-    return (await response.json()).count
+    return (await raw(`/daily/count/${lang}`)).count
 }
+
+export const createDuel = (lang) => authed('/duels', { method: 'POST', body: { lang } })
+export const joinDuel = (code) => authed(`/duels/${code}/join`, { method: 'POST', body: {} })
+export const fetchDuel = (code) => authed(`/duels/${code}`)

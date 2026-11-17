@@ -2,7 +2,7 @@
 import { STORAGE_KEY, CUSTOM, LANGUAGES, DEFAULT_LANGUAGE } from '../config.js'
 
 // Nothing saved yet
-const emptyData = () => ({ username: '', language: null, scores: [], daily: {}, settings: {} })
+const emptyData = () => ({ username: '', token: '', language: null, scores: [], daily: {}, settings: {} })
 
 // The daily progress of each language: { en: { date, guesses }, fr: { date, guesses } }
 // (it used to be a single { date, guesses }, played in English)
@@ -20,6 +20,7 @@ function readData() {
 		const data = JSON.parse(stored)
 		return {
 			username: typeof data.username === 'string' ? data.username : '',
+			token: typeof data.token === 'string' ? data.token : '',
 			language: data.language in LANGUAGES ? data.language : null,
 			scores: Array.isArray(data.scores) ? data.scores : [],
 			daily: readDaily(data.daily),
@@ -47,6 +48,16 @@ export function saveUsername(username) {
 	data.username = username.trim()
 	writeData(data)
 	return data.username
+}
+
+export function getToken() {
+	return readData().token
+}
+
+export function saveToken(token) {
+	const data = readData()
+	data.token = token
+	writeData(data)
 }
 
 // The language chosen by the player (null the first time)

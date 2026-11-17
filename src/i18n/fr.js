@@ -32,6 +32,8 @@ export default {
     'welcome.intro': "Bienvenue dans une version bien meilleure du célèbre jeu WORDLE. C'est bien mieux que tout ce que vous avez vu jusqu'ici. Jouez avec vos amis, votre famille, votre chien, ou même benbi (à vos risques et périls). Amusez-vous avec de nombreux modes, et choisissez le niveau de difficulté que vous voulez avec le mode personnalisé. Mais d'abord...",
     'welcome.username': 'Choisissez un pseudo',
     'welcome.continue': 'Continuer',
+    'welcome.taken': 'Ce pseudo est déjà pris',
+    'welcome.invalid': 'Utilisez des lettres, des chiffres, des espaces, points, tirets ou underscores',
 
     // à propos
     'about.intro': "WORDEULE est un petit jeu fait par 2 amis pour un projet de cours. Le but n'est pas de faire quelque chose de professionnel ou de sophistiqué, mais juste quelque chose d'amusant, avec beaucoup de possibilités.",
@@ -47,6 +49,9 @@ export default {
     'game.lockedLetters': 'Gardez les lettres verrouillées à leur place',
     'game.timeUp': 'Temps écoulé',
     'game.connection': 'Problème de connexion, réessayez',
+    'game.tooFast': 'Doucement, pas si vite',
+    'game.offline': 'Le serveur est injoignable : cette partie ne sera pas classée.',
+    'game.nameTaken': 'Votre pseudo est déjà utilisé par quelqu\'un d\'autre : cette partie ne sera pas classée. Changez-le dans les réglages.',
     'status.correct': 'bien placée',
     'status.present': 'ailleurs',
     'status.absent': 'absente',
@@ -91,6 +96,9 @@ export default {
 
     // classement
     'leaderboard.mine': 'Sur cet appareil',
+    'leaderboard.period.all': 'Depuis toujours',
+    'leaderboard.period.week': 'Cette semaine',
+    'leaderboard.period.today': "Aujourd'hui",
     'leaderboard.today': 'Mot du {date}',
     'leaderboard.loading': 'Chargement...',
     'leaderboard.error': 'Impossible de charger le classement',
