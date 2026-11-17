@@ -54,7 +54,7 @@ export default function duelsRouter({ db, store, bank, auth, limiters, now }) {
         insert.run(code, lang, word, req.player.id, now())
         const duel = byCode.get(code)
         const { id, run } = await createRunFor(duel, req.player.id)
-        res.status(201).json({ code, runId: id, ...runView(run) })
+        res.status(201).json({ code, runId: id, serverNow: now(), ...runView(run) })
     })
 
     router.post('/:code/join', auth.required, limiters.start, async (req, res) => {
@@ -63,11 +63,11 @@ export default function duelsRouter({ db, store, bank, auth, limiters, now }) {
 
         const runs = store.forDuel(duel.code)
         const mine = runs.find((row) => row.player_id === req.player.id)
-        if (mine) return respond(res, mine.id, store.load(mine))
+        if (mine) return respond(res, mine.id, store.load(mine), now())
         if (runs.length >= 2) return res.status(403).json({ error: 'full' })
 
         const { id, run } = await createRunFor(duel, req.player.id)
-        respond(res, id, run)
+        respond(res, id, run, now())
     })
 
     router.get('/:code', auth.required, limiters.read, (req, res) => {

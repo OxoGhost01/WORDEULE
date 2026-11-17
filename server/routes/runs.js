@@ -5,8 +5,8 @@ import { GUESS_MIN_INTERVAL_MS, LANGUAGE_IDS, LEADERBOARD_MODES } from '../../sh
 
 const CONFLICT_ERRORS = new Set(['finished', 'timeUp', 'cannotContinue'])
 
-export function respond(res, id, run) {
-    res.json({ runId: id, ...runView(run) })
+export function respond(res, id, run, time = Date.now()) {
+    res.json({ runId: id, serverNow: time, ...runView(run) })
 }
 
 export default function runsRouter({ store, bank, seed, auth, limiters, now }) {
@@ -34,7 +34,7 @@ export default function runsRouter({ store, bank, seed, auth, limiters, now }) {
             if (existing) {
                 const run = store.load(existing)
                 expireIfLate(run, time)
-                return respond(res, existing.id, run)
+                return respond(res, existing.id, run, time)
             }
         } else {
             store.endActive(req.player.id, mode, lang, time)
@@ -42,7 +42,7 @@ export default function runsRouter({ store, bank, seed, auth, limiters, now }) {
 
         const run = await startRun({ mode, lang, getLists: bank.listsFor(lang), seed, date: new Date(time), now: time })
         const id = store.create(run, { playerId: req.player.id, day, now: time })
-        respond(res, id, run)
+        respond(res, id, run, time)
     })
 
     router.post('/:id/guess', auth.required, limiters.play, async (req, res) => {
@@ -62,7 +62,7 @@ export default function runsRouter({ store, bank, seed, auth, limiters, now }) {
             return res.status(CONFLICT_ERRORS.has(error.code) ? 409 : 422).json({ error: error.code })
         }
         store.save(row.id, run, time, time)
-        respond(res, row.id, run)
+        respond(res, row.id, run, time)
     })
 
     router.post('/:id/next', auth.required, limiters.play, async (req, res) => {
@@ -79,7 +79,7 @@ export default function runsRouter({ store, bank, seed, auth, limiters, now }) {
             return res.status(409).json({ error: error.code })
         }
         store.save(row.id, run, time, row.last_guess_ms)
-        respond(res, row.id, run)
+        respond(res, row.id, run, time)
     })
 
     return router

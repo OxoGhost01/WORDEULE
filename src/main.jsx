@@ -4,6 +4,10 @@ import './index.css'
 import Home from './pages/home.jsx'
 import { BrowserRouter } from 'react-router'
 import LanguageProvider from './i18n/LanguageProvider.jsx'
+import { applyPrefs } from './data/prefs.js'
+import { getPrefs } from './data/storage.js'
+
+applyPrefs(getPrefs())
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

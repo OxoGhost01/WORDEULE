@@ -12,12 +12,16 @@ const LOCKED = ['correct', 'present', 'absent', 'absent', 'absent']
 const CONTENT = {
     basics: ['howto.basics.welcome', 'howto.basics.goal', 'howto.basics.colors', { example: BLUE }, 'howto.basics.blue',
         { example: YELLOW }, 'howto.basics.yellow', { example: BLACK }, 'howto.basics.black',
-        'howto.basics.typing', 'howto.basics.points', 'howto.basics.share'],
+        'howto.basics.typing', 'howto.basics.points', 'howto.basics.share', 'howto.basics.accessibility'],
     daily: ['howto.daily.rules', 'howto.daily.attempt', 'howto.daily.leaderboard'],
     classic: ['howto.classic.rules', 'howto.classic.run', 'howto.classic.scores'],
     custom: ['howto.custom.rules', 'howto.custom.saved'],
     hardcore: ['howto.hardcore.rules', 'howto.hardcore.grids', 'howto.hardcore.points', 'howto.hardcore.keyboard'],
     locked: ['howto.locked.rules', { example: LOCKED }, 'howto.locked.fixed', 'howto.locked.used'],
+    survival: ['howto.survival.rules', 'howto.survival.grow', 'howto.survival.points'],
+    blitz: ['howto.blitz.rules', 'howto.blitz.time', 'howto.blitz.points'],
+    reverse: ['howto.reverse.rules', { example: LOCKED }, 'howto.reverse.tries', 'howto.reverse.points'],
+    duel: ['howto.duel.rules', 'howto.duel.how', 'howto.duel.winner'],
 }
 
 // A line of tiles as seen in the game: statuses are 'correct', 'present' or 'absent'

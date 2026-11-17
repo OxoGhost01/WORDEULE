@@ -2,7 +2,7 @@
 import { STORAGE_KEY, CUSTOM, LANGUAGES, DEFAULT_LANGUAGE } from '../config.js'
 
 // Nothing saved yet
-const emptyData = () => ({ username: '', token: '', language: null, scores: [], daily: {}, settings: {} })
+const emptyData = () => ({ username: '', token: '', language: null, scores: [], daily: {}, settings: {}, prefs: {} })
 
 // The daily progress of each language: { en: { date, guesses }, fr: { date, guesses } }
 // (it used to be a single { date, guesses }, played in English)
@@ -25,6 +25,7 @@ function readData() {
 			scores: Array.isArray(data.scores) ? data.scores : [],
 			daily: readDaily(data.daily),
 			settings: data.settings && typeof data.settings === 'object' ? data.settings : {},
+			prefs: data.prefs && typeof data.prefs === 'object' ? data.prefs : {},
 		}
 	} catch {
 		return emptyData()
@@ -120,5 +121,17 @@ export function getSettings() {
 export function saveSettings(settings) {
 	const data = readData()
 	data.settings = settings
+	writeData(data)
+}
+
+export const DEFAULT_PREFS = { palette: 'default', motion: 'system' }
+
+export function getPrefs() {
+	return { ...DEFAULT_PREFS, ...readData().prefs }
+}
+
+export function savePrefs(prefs) {
+	const data = readData()
+	data.prefs = prefs
 	writeData(data)
 }

@@ -45,3 +45,24 @@ export default function computeStats(scores, mode, maxTries = DEFAULT_MAX_TRIES,
         distribution,
     }
 }
+
+const DAY_MS = 86400000
+const daysBetween = (from, to) => Math.round((Date.parse(to) - Date.parse(from)) / DAY_MS)
+
+export function dailyStreaks(scores, today) {
+    const days = [...new Set(scores
+        .filter((result) => result.mode === 'daily' && result.outcome === 'won')
+        .map((result) => result.playedAt.slice(0, 10)))].sort()
+
+    let best = 0
+    let run = 0
+    let previous = null
+    for (const day of days) {
+        run = previous && daysBetween(previous, day) === 1 ? run + 1 : 1
+        best = Math.max(best, run)
+        previous = day
+    }
+
+    const current = previous && daysBetween(previous, today) <= 1 ? run : 0
+    return { current, best, days }
+}

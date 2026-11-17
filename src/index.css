@@ -172,8 +172,20 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  :root:not([data-motion="full"]) *,
+  :root:not([data-motion="full"]) *::before,
+  :root:not([data-motion="full"]) *::after {
     animation: none !important;
     transition: none !important;
   }
 }
+
+:root[data-motion="reduce"] *,
+:root[data-motion="reduce"] *::before,
+:root[data-motion="reduce"] *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+:root[data-palette="contrast"] .correct { --bg: #ff7a00; --fg: var(--color-ink); }
+:root[data-palette="contrast"] .present { --bg: #8fd8ff; --fg: var(--color-ink); }
