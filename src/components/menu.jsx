@@ -9,10 +9,10 @@ const MODES = [
     { to: '/locked', mode: 'locked', ink: 'bg-sun' },
     { to: '/hardcore', mode: 'hardcore', ink: 'bg-ink text-paper' },
     { to: '/custom', mode: 'custom', ink: 'bg-cobalt text-paper' },
-    { to: '/blitz', mode: 'blitz', ink: 'bg-sun', isNew: true },
-    { to: '/survival', mode: 'survival', ink: 'bg-card', isNew: true },
-    { to: '/reverse', mode: 'reverse', ink: 'bg-pink', isNew: true },
-    { to: '/duel', mode: 'duel', ink: 'bg-cobalt text-paper', isNew: true },
+    { to: '/blitz', mode: 'blitz', ink: 'bg-sun' },
+    { to: '/survival', mode: 'survival', ink: 'bg-card' },
+    { to: '/reverse', mode: 'reverse', ink: 'bg-pink' },
+    { to: '/duel', mode: 'duel', ink: 'bg-cobalt text-paper' },
 ]
 
 const LINKS = [
@@ -52,12 +52,9 @@ export default function Menu() {
                 <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                     {MODES.map((entry, i) => (
                         <li key={entry.to}>
-                            <Link to={entry.to} className={`relative flex h-full flex-col gap-1 p-4 ${entry.ink} ${slab} ${i % 2 ? 'rotate-1' : '-rotate-1'}`}>
+                            <Link to={entry.to} className={`flex h-full flex-col gap-1 p-4 ${entry.ink} ${slab} ${i % 2 ? 'rotate-1' : '-rotate-1'}`}>
                                 <span className="font-display text-3xl font-extrabold uppercase">{t(`modes.${entry.mode}`)}</span>
                                 <span className="text-sm">{t(`menu.${entry.mode}`)}</span>
-                                {entry.isNew && (
-                                    <span className="absolute -top-3 -right-2 rotate-6 border-2 border-ink bg-pink px-2 text-xs font-bold uppercase text-ink">{t('menu.new')}</span>
-                                )}
                             </Link>
                         </li>
                     ))}

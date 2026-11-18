@@ -157,7 +157,6 @@ export default {
     'pages.settings': 'Réglages',
     'menu.play': 'Jouer',
     'menu.more': 'Plus',
-    'menu.new': 'Nouveau',
     'menu.dailyDone': "Terminé pour aujourd'hui. À demain.",
     'menu.streak': '{count} jours de suite',
     'menu.streakOne': '1 jour de suite',

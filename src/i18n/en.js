@@ -157,7 +157,6 @@ export default {
     'pages.settings': 'Settings',
     'menu.play': 'Play',
     'menu.more': 'More',
-    'menu.new': 'New',
     'menu.dailyDone': 'Done for today. See you tomorrow.',
     'menu.streak': '{count} days in a row',
     'menu.streakOne': '1 day in a row',
