@@ -137,14 +137,15 @@ describe('reverse run', () => {
         expect(solution).toBeDefined()
         await submitGuess(run, solution, ctx)
         expect(run.status).toBe('won')
-        expect(run.score).toBe(300)
+        expect(run.score).toBe(100)
     })
 
-    it('loses after three wrong tries', async () => {
+    it('loses on the first wrong word', async () => {
         const run = await newRun('reverse')
         const wrong = WORDS.find((w) => JSON.stringify(runPattern(w, run.state.answers[0])) !== JSON.stringify(run.state.pattern))
-        for (let i = 0; i < 3; i++) await submitGuess(run, wrong, ctx)
+        await submitGuess(run, wrong, ctx)
         expect(run.status).toBe('lost')
+        expect(run.state.rows).toHaveLength(1)
     })
 })
 

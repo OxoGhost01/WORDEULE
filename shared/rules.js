@@ -24,7 +24,7 @@ export const GAME_MODES = {
     hardcore: { wordLength: 5, maxTries: 9, grids: 4, endless: true },
     survival: { wordLength: 4, maxTries: 6, grids: 1, endless: true },
     blitz: { wordLength: 5, maxTries: 6, grids: 1, endless: true },
-    reverse: { wordLength: 5, maxTries: 3, grids: 1, endless: true },
+    reverse: { wordLength: 5, maxTries: 1, grids: 1, endless: true },
     duel: { wordLength: 5, maxTries: 6, grids: 1, endless: false },
 }
 

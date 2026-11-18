@@ -209,7 +209,7 @@ describe('runs', () => {
         expect((await start(user, 'survival')).wordLength).toBe(4)
         const reverse = await start(user, 'reverse')
         expect(reverse.pattern).toHaveLength(5)
-        expect(reverse.maxTries).toBe(3)
+        expect(reverse.maxTries).toBe(1)
     })
 })
 

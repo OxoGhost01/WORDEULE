@@ -50,7 +50,7 @@ Type with the keyboard or with the one on the screen, which also shows the state
 | **Locked** | 5 | 6 | The hard mode. A letter found at its place is locked there and pre-filled on every new line. A letter found elsewhere must be used in the next guesses. |
 | **Survival** | 4 to 10 | 6 | Endless, and every word found makes the next one a letter longer (up to 10). One miss ends the run. |
 | **Blitz** | 5 | 6 | A clock of 90 seconds, and every word found adds 15 seconds. Find as many words as you can; a missed word gives nothing and a new one starts right away. |
-| **Reverse** | 5 | 3 | A word is shown with a row of colors: find another valid word that gives exactly these colors against it. A wrong word shows the colors it really gives. Endless: the first puzzle missed ends the run. |
+| **Reverse** | 5 | 1 | A word is shown with a row of colors: find another valid word that gives exactly these colors against it. You have a single try per puzzle, and the first puzzle missed ends the run. |
 | **Duel** | 5 | 6 | You and a friend play the same secret word, from a link or a 6-character code. The fewest tries wins, then the fastest. Not ranked, and it needs the server. |
 
 Daily, classic, hardcore, locked, survival, blitz and reverse are **ranked**: they are played on the server (see [The server and its API](#the-server-and-its-api)). If the server can't be reached, the game falls back to a local, unranked game and says so.
